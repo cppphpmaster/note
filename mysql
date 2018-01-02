@@ -1,0 +1,13 @@
+
+重启mysql: service mysql restart
+查看严格模式: select @@sql_mode;
+查看字符集: SHOW VARIABLES LIKE 'character%';
+查看字符排序: SHOW VARIABLES LIKE 'collation%';
+查看数据库中表的数目: SELECT count(TABLE_NAME) FROM information_schema.TABLES WHERE TABLE_SCHEMA='amazon'; 
+
+版本问题:
+  mysql5.5.5默认没有启用严格模式
+  mysql5.7.19中默认启用严格模式
+
+严格模式: 
+  Ubuntu: 修改my.cnf, sql_mode = , 就是去掉所有严格模式,也可以只去掉某个严格模式,注释掉这句就是默认会开启所有严格模式
