@@ -2,3 +2,6 @@ openssh, pcre, zlib依赖:
   sudo apt-get install openssl libssl-dev
   sudo apt-get install libpcre3 libpcre3-dev
   sudo apt-get install zlib1g-dev
+
+启动: sudo ./nginx/sbin/nginx 
+停止: 
