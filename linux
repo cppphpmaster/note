@@ -12,4 +12,4 @@
   tcpdump: TcpDump可以将网络中传送的数据包完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。
   ldd: (list dynamic dependencies) 列出动态库依赖关系
   命令行音乐播放器：sudo apt-get install sox libsox-fmt-all
-  定时播放音乐： 00 5 * * * nohup play /home/kobeincode/音乐/CloudMusic/凯瑟喵\ -\ 撒野.mp3 > /dev/null 2>&1 &
+  定时播放音乐： crontab -e, 加入：00 5 * * * nohup play /home/kobeincode/音乐/CloudMusic/凯瑟喵\ -\ 撒野.mp3 > /dev/null 2>&1 &
