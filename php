@@ -10,7 +10,6 @@ libxml2-dev \
 libmysqlclient-dev \
 libcurl4-openssl-dev \
 libjpeg8-dev \
-libpng12-dev \
 libfreetype6-dev \
 
 2.安装php
@@ -33,15 +32,12 @@ cd php-xxx/
 --disable-rpath \
 --disable-debug \
 --disable-fileinfo \
---with-mysql=mysqlnd \
 --with-mysqli=mysqlnd \
 --with-pdo-mysql=mysqlnd \
 --with-pcre-regex \
 --with-iconv \
 --with-zlib \
---with-mcrypt \
 --with-gd \
---with-openssl \
 --with-mhash \
 --with-xmlrpc \
 --with-curl \
