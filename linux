@@ -14,3 +14,4 @@
   命令行音乐播放器：sudo apt-get install sox libsox-fmt-all
   定时播放音乐： crontab -e, 加入：00 5 * * * nohup play "/home/kobeincode/音乐/CloudMusic/凯瑟喵 - 撒野.mp3" > /dev/null 2>&1 &
   netease-cloud-music cannot open: 1. sudo apt-get install gnome-themes-standard, 2. reboot 3.sudo netease-cloud-music
+  firefox flashplayer: sudo cp libflashplayer.so /usr/lib/firefox/browser/plugins  sudo cp -r Downloads/flashplayer/usr/* /usr
