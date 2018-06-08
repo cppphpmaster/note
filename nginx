@@ -4,4 +4,29 @@ openssh, pcre, zlib依赖:
   sudo apt-get install zlib1g-dev
 
 启动: sudo ./nginx/sbin/nginx 
-停止: 
+停止:
+
+nginx的默认安装路径在/usr/local/nginx下.
+nginx的默认配置在/etc/nginx下.
+
+修改nginx默认端口:
+   sudo vim  /etc/nginx/sites-enabled/default
+   将server {
+            listen 80 default_server;
+            listen [::]:80 default_server;
+   改为server {
+             listen 8088 default_server;
+             listen [::]:8088 default_server;
+
+
+nginx简单的操作命令
+
+    sudo service nginx start        #启动
+    sudo service nginx stop         #停止
+    sudo service nginx restart      #重新启动
+    sudo service nginx reload       #重新启动
+
+    sudo nginx -s start     #启动
+    sudo nginx -s stop      #停止
+    sudo nginx -s restart   #重新启动
+    sudo nginx -s reload    #重新加载配置

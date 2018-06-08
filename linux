@@ -1,6 +1,7 @@
 基本操作:
   解压xz：1. xz -d ***.tar.xz  2.tar -xf  ***.tar
   解压gz到指定目录：tar -xf ***.tar.gz -C ./xxx
+  解压.tar.bz2文件: tar -xjf filename.tar.bz2
   lrzsz: sz下载, lz上传
   查看进程: ps -ef | grep mysqld
   lsof: (list open files) 显示系统打开的文件，因为 lsof 需要访问核心内存和各种文件，所以必须以 root 用户的身份运行它才能够充分地发挥其功能
@@ -17,3 +18,113 @@
   firefox flashplayer: sudo cp libflashplayer.so /usr/lib/firefox/browser/plugins  sudo cp -r Downloads/flashplayer/usr/* /usr
   
   /usr/local/bin/pstorm
+
+  安装php7.2:
+    1. 安装软件源拓展工具：
+    apt -y install software-properties-common apt-transport-https lsb-release ca-certificates
+    添加 Ondřej Surý 的 PHP PPA 源，需要按一次回车：
+    add-apt-repository ppa:ondrej/php
+    更新软件源缓存：
+    apt update
+
+    2. 安装 PHP7.2：
+    apt install php7.2-fpm php7.2-mysql php7.2-curl php7.2-gd php7.2-mbstring php7.2-xml php7.2-xmlrpc php7.2-zip php7.2-opcache -y
+
+    3. 设置 PHP
+       安装完成后，编辑 /etc/php/7.2/fpm/php.ini 替换换 ;cgi.fix_pathinfo=1 为 cgi.fix_pathinfo=0 快捷命令：
+       sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php/7.2/fpm/php.ini
+    4. 管理 PHP
+       安装好了先重启一下！
+       systemctl restart php7.2-fpm
+       更多操作：
+       systemctl restart php7.2-fpm #重启
+       systemctl start php7.2-fpm #启动
+       systemctl stop php7.2-fpm #关闭
+       systemctl status php7.2-fpm #检查状态
+    5. 更新 PHP
+       运行下面的命令系统就会更新所有可以更新的软件包括 PHP
+       apt update
+       apt upgrade -y
+    6. 安装更多组件
+       上面的一条命令安装 PHP 只是安装了部分 PHP 拓展，更多的软件可见：
+       root@mf88.biz-service:~# apt-cache search php7.2
+       php-radius - radius client library for PHP
+       php-http - PECL HTTP module for PHP Extended HTTP Support
+       php-uploadprogress - file upload progress tracking extension for PHP
+       php-yaml - YAML-1.1 parser and emitter for PHP
+       php-mongodb - MongoDB driver for PHP
+       php-apcu - APC User Cache for PHP
+       php-imagick - Provides a wrapper to the ImageMagick library
+       php-ssh2 - Bindings for the libssh2 library
+       php-redis - PHP extension for interfacing with Redis
+       php-memcached - memcached extension module for PHP, uses libmemcached
+       php-apcu-bc - APCu Backwards Compatibility Module
+       php-rrd - PHP bindings to rrd tool system
+       php-uuid - PHP UUID extension
+       php-memcache - memcache extension module for PHP
+       php-zmq - ZeroMQ messaging bindings for PHP
+       php-igbinary - igbinary PHP serializer
+       php-msgpack - PHP extension for interfacing with MessagePack
+       php-geoip - GeoIP module for PHP
+       php-tideways - Tideways PHP Profiler Extension
+       php-yac - YAC (Yet Another Cache) for PHP
+       php-mailparse - Email message manipulation for PHP
+       php-oauth - OAuth 1.0 consumer and provider extension
+       php-gnupg - PHP wrapper around the gpgme library
+       php-propro - propro module for PHP
+       php-raphf - raphf module for PHP
+       php-solr - PHP extension for communicating with Apache Solr server
+       php-stomp - Streaming Text Oriented Messaging Protocol (STOMP) client module for PHP
+       php-gearman - PHP wrapper to libgearman
+       php-phalcon - full-stack PHP framework delivered as a C-extension
+       php-ds - PHP extension providing efficient data structures for PHP 7
+       php-sass - PHP bindings to libsass - fast, native Sass parsing in PHP
+       php-lua - PHP Embedded lua interpreter
+       libapache2-mod-php7.2 - server-side, HTML-embedded scripting language (Apache 2 module)
+       libphp7.2-embed - HTML-embedded scripting language (Embedded SAPI library)
+       php7.2-bcmath - Bcmath module for PHP
+       php7.2-bz2 - bzip2 module for PHP
+       php7.2-cgi - server-side, HTML-embedded scripting language (CGI binary)
+       php7.2-cli - command-line interpreter for the PHP scripting language
+       php7.2-common - documentation, examples and common module for PHP
+       php7.2-curl - CURL module for PHP
+       php7.2-dba - DBA module for PHP
+       php7.2-dev - Files for PHP7.2 module development
+       php7.2-enchant - Enchant module for PHP
+       php7.2-fpm - server-side, HTML-embedded scripting language (FPM-CGI binary)
+       php7.2-gd - GD module for PHP
+       php7.2-gmp - GMP module for PHP
+       php7.2-imap - IMAP module for PHP
+       php7.2-interbase - Interbase module for PHP
+       php7.2-intl - Internationalisation module for PHP
+       php7.2-json - JSON module for PHP
+       php7.2-ldap - LDAP module for PHP
+       php7.2-mbstring - MBSTRING module for PHP
+       php7.2-mysql - MySQL module for PHP
+       php7.2-odbc - ODBC module for PHP
+       php7.2-opcache - Zend OpCache module for PHP
+       php7.2-pgsql - PostgreSQL module for PHP
+       php7.2-phpdbg - server-side, HTML-embedded scripting language (PHPDBG binary)
+       php7.2-pspell - pspell module for PHP
+       php7.2-readline - readline module for PHP
+       php7.2-recode - recode module for PHP
+       php7.2-snmp - SNMP module for PHP
+       php7.2-soap - SOAP module for PHP
+       php7.2-sqlite3 - SQLite3 module for PHP
+       php7.2-sybase - Sybase module for PHP
+       php7.2-tidy - tidy module for PHP
+       php7.2-xml - DOM, SimpleXML, WDDX, XML, and XSL module for PHP
+       php7.2-xmlrpc - XMLRPC-EPI module for PHP
+       php7.2-zip - Zip module for PHP
+       php7.2-xsl - XSL module for PHP (dummy)
+       php7.2 - server-side, HTML-embedded scripting language (metapackage)
+       php7.2-sodium - libsodium module for PHP
+
+  换源:
+    /etc/apt/sources.list
+
+  查看ubuntu版本:
+  	    lsb_release -a
+  	    cat /etc/issue
+		
+ssh指定端口登陆: ssh -p port username@ip

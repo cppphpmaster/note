@@ -1,4 +1,4 @@
-1.安装编译环境
+1.安装编译环境  (apt-get install build-essential   apt-get install libtool)
 sudo apt-get install \
 build-essential \
 gcc \
@@ -40,6 +40,8 @@ cd php-xxx/
 --with-gd \
 --with-mhash \
 --with-xmlrpc \
+
+
 --with-curl \
 --with-imap-ssl
 以上PHP编译选项根据实际情况可调整
