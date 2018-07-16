@@ -1,0 +1,40 @@
+1. 创建目录/usr/local/lib/openssl
+2. 下载openssl, ./config --prefix=/usr/local/lib/openssl,  sudo make, sudo make install
+3. 进入phpxx/ext/openssl, phpize, ./configure --with-php-config=/usr/local/php/bin/php-config  --with-openssl=/usr/local/lib/openssl, sudo make, sudo make install
+
+ 
+ 1.缺少openssl扩展，安装过程
+
+[html] view plain copy
+
+    1、cd /root/tar    
+    wget http://www.openssl.org/source/openssl-1.0.2j.tar.gz  
+    tar -zxvf openssl-1.0.2j.tar.gz    
+    cd php-5.6.16/ext/openssl/  
+    mv config0.m4 config.m4  
+    /usr/local/php/bin/phpize    
+    ./configure --with-openssl --with-php-config=/usr/local/php/bin/php-config    
+    make    
+    sudo make install  
+
+
+2、安装完成，会显示安装目录，cd安装目录，可以看到openssl.so扩展
+
+
+3、修改php.ini，如果找不到配置文件，可以输出phpinfo查看，开启openssl扩展：
+
+增加extension = openssl.so
+
+
+3、重启nginx 或者apache，reload不行，一定要重启
+
+/etc/init.d/nginx restart 
+
+如果是apache，使用service httpd restart
+
+
+4、重启php
+
+/etc/init.d/php-fpm stop 
+
+/etc/init.d/php-fpm start

@@ -1,0 +1,2 @@
+kill 进程id
+kill -9 进程id

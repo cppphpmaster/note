@@ -1,0 +1,49 @@
+curl开启ssl 安装openssl带--shared
+2016年06月29日 19:10:55
+阅读数：425
+
+Note: The latest stable version is the 1.0.2 series of releases. This is also our Long Term Support (LTS) version (support will be provided until 31st December 2019). 
+
+mkdir /usr/local/openssl,新建openssl目录
+
+1.wget https://www.openssl.org/source/openssl-1.0.2h.tar.gz
+
+2.tar -xvf openssl-1.0.2h.tar.gz
+
+3.cd openssl-1.0.2h
+
+4../config --prefix=/usr/local/openssl -fPIC --shared
+
+5.make
+
+6.make install
+
+注:  带有shared,才会生成libssl.so文件,动态库,这样装curl时, --with-ssl=/usr/local/openssl 才会找到动态库，curl安装才会开启ssl
+
+[root@localhost lib]# ls
+engines  libcrypto.a  libcrypto.so  libcrypto.so.1.0.0  libssl.a  libssl.so  libssl.so.1.0.0  pkgconfig
+[root@localhost lib]# pwd
+/usr/local/ssl/lib
+
+
+mkdir /usr/local/curl 新建curl目录
+
+1.wget https://curl.haxx.se/download/curl-7.49.1.tar.gz
+
+2.tar -xvf curl-7.49.1.tar.gz
+
+3.cd curl-7.49.1/
+
+4../configure --prefix=/usr/local/curl --with-ssl=/usr/local/openssl
+
+
+==================================================================================
+
+方式二：
+
+yum -y install openssl-devel
+tar xf curl-7.39.0.tar.gz
+cd curl-7.39.0
+./configure --prefix=/path/lib/curl --with-ssl
+make 
+make install

@@ -1,1 +1,5 @@
 查看swoole版本: php -r 'echo SWOOLE_VERSION;'
+
+查看swoole扩展: php --ri swoole
+
+./configure --with-openssl=/usr/local/lib/openssl --enable-sockets --enable-swoole-debug --with-php-config=/usr/local/php/bin/php-config

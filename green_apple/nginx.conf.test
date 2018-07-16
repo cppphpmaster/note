@@ -1,0 +1,338 @@
+# dir - /etc/nginx/nginx.conf
+
+user guomaoye guomaoye;
+worker_processes 4;
+pid /run/nginx.pid;
+
+events {
+    use epoll;
+	worker_connections 768;
+	# multi_accept on;
+}
+
+http {
+
+	##
+	# Basic Settings
+	##
+
+	sendfile on;
+	tcp_nopush on;
+	tcp_nodelay on;
+	keepalive_timeout 65;
+	types_hash_max_size 2048;
+    server_tokens off;
+
+	# server_names_hash_bucket_size 64;
+	# server_name_in_redirect off;
+
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+
+	##
+	# Logging Settings
+	##
+
+	access_log /var/log/nginx/access.log;
+	error_log /var/log/nginx/error.log;
+
+	##
+	# Gzip Settings
+	##
+    log_format  gzip  '$request_time $upstream_response_time - $remote_addr - $remote_user [$time_iso8601] '
+                      '$server_name "$request" $status $bytes_sent '
+                      '"$http_referer" "$http_user_agent" "$gzip_ratio" "$upstream_addr" ';
+	gzip on;
+	gzip_disable "msie6";
+
+	gzip_vary on;
+	# gzip_proxied any;
+    gzip_min_length  1000;
+	gzip_comp_level 6;
+	gzip_buffers 16 8k;
+	gzip_http_version 1.1;
+	gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+    
+    client_max_body_size 150M;
+	
+    geo $whiteiplist {
+        default 1;
+        127.0.0.1 0;
+    }
+
+    map $whiteiplist $limit {
+        1 $binary_remote_addr;
+        0 "";
+    }
+
+    limit_req_zone $limit zone=limit:10m rate=200r/s;
+    limit_req zone=limit burst=100;
+
+    upstream httpd_server {
+        server 127.0.0.1:40080;        
+    }
+
+    proxy_buffering  on;
+    proxy_buffers 400 256k;
+    proxy_buffer_size 64k;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_temp_path /data/proxy_temp;
+    charset utf-8;
+
+    client_header_buffer_size 64k;
+    large_client_header_buffers 4 64k;
+
+    allow 127.0.0.1/32;
+    #deny all;
+
+    #server {
+    #    listen       80;
+    #    server_name shop-dev.qa.kangkanghui.com;
+    #    allow all;
+    #    location / {
+    #        proxy_pass http://httpd_server;
+    #    }
+    #}
+  
+    server {
+        listen       80;            
+        server_name   shop.test.kangkanghui.com;
+        root /var/www/kkh/app-kkh-shop/dist/;
+        index index.html index.htm;
+        location / {
+            try_files $uri $uri/ /index.html last;
+            index index.html;
+        }
+        access_log /data/logs/nginx/shop.test.kangkanghui.com-access.log gzip;
+    }
+
+    server {
+        listen       80;            
+        server_name   mx.test.kangkanghui.com;
+        root /var/www/kkh/app-kkh-marketing/dist/;
+        index index.html index.htm;
+        location / {
+            try_files $uri $uri/ /index.html last;
+            index index.html;
+        }
+        access_log /data/logs/nginx/mx.test.kangkanghui.com-access.log gzip;
+		}
+
+    server {
+        listen       80;            
+        server_name   admin.shop.test.kangkanghui.com;
+        root /var/www/kkh/app-kkh-shop-management/shop-management/dist;
+        index index.html index.htm;
+        location / {
+            try_files $uri $uri/ /index.html last;
+            index index.html;
+        }
+        access_log /data/logs/nginx/admin.shop.test.kangkanghui.com-access.log gzip;
+    }
+
+    server {
+        listen       80;
+        server_name shop-api.dev.kangkanghui.com;
+        location / {
+            proxy_pass http://httpd_server;
+        }
+        access_log /data/logs/nginx/shop-api.dev.kangkanghui.com.log gzip;
+    }
+
+    server {
+        listen       80;
+        server_name shop-api.test.kangkanghui.com;
+        location / {
+            proxy_pass http://httpd_server;
+        }
+        access_log /data/logs/nginx/shop-api.test.kangkanghui.com.log gzip;
+    }
+
+    server {
+        listen       80; 
+        server_name coupon-api.test.kangkanghui.com;
+        location / { 
+            proxy_pass http://httpd_server;
+        }   
+        access_log /data/logs/nginx/coupon-api.test.kangkanghui.com.log gzip;
+    }   
+
+    server {
+        listen        80;
+        server_name usercenter-api.dev.kangkanghui.com;
+        location / {
+            proxy_pass http://httpd_server;
+        }
+        #access_log /data/logs/nginx/usercenter-api.dev.kangkanghui.com.log gzip;
+    }
+
+    server {
+        listen        80;
+        server_name usercenter-api.test.kangkanghui.com;
+        location / {
+            proxy_pass http://httpd_server;
+        }
+        #access_log /data/logs/nginx/usercenter-api.test.kangkanghui.com.log gzip;
+    }
+
+    server {
+        listen       80;
+        server_name groupon-api.dev.kangkanghui.com;
+        location / {
+            proxy_pass http://httpd_server;
+        }
+        access_log /data/logs/nginx/groupon-api.dev.kangkanghui.com.log gzip;
+    }
+    
+    server {
+        listen       80;
+        server_name groupon-api.test.kangkanghui.com;
+        location / {
+            proxy_pass http://httpd_server;
+        }    
+        access_log /data/logs/nginx/groupon-api.test.kangkanghui.com.log gzip;
+    }
+
+    server {
+        listen       80; 
+        server_name admin-api.test.kangkanghui.com;
+        location / { 
+            proxy_pass http://httpd_server;
+        }    
+        access_log /data/logs/nginx/admin-api.test.kangkanghui.com.log gzip;
+    }   
+
+    server {
+        listen       80; 
+        server_name science-api.test.kangkanghui.com;
+        location / { 
+            proxy_pass http://httpd_server;
+        }    
+        access_log /data/logs/nginx/science-api.test.kangkanghui.com.log gzip;
+    }   
+
+
+    server {
+        listen       80; 
+        server_name shop-api-yxf.test.kangkanghui.com;
+        location / { 
+            proxy_pass http://httpd_server;
+        }    
+        access_log /data/logs/nginx/shop-api-yxf.test.kangkanghui.com.log gzip;
+    }   
+    
+   server {
+            listen       80;
+            server_name logistics-api.test.kangkanghui.com;
+            location / {
+                proxy_pass http://httpd_server;
+            }
+            access_log /data/logs/nginx/logistics-api.test.kangkanghui.com.log gzip;
+        }
+
+
+
+    #server {
+    #    listen       80;
+    #    server_name coupon-dev.api.kangkanghui.com;
+    #    allow all;
+    #    location / {
+    #        proxy_pass http://httpd_server;
+    #    }
+    #    access_log /data/logs/nginx/coupon-dev.api.kangkanghui.com.log gzip;
+    #}
+
+    #server {
+    #    listen       80;
+    #    server_name chat.api.kangkanghui.com;
+    #    allow all;
+    #    location / {
+    #        proxy_pass http://httpd_server;        
+    #    }
+    #    access_log /data/logs/nginx/chat.api.kangkanghui.com.log gzip;
+    #}
+    
+    #server {
+    #    listen       80;
+    #    server_name touch.shop.kangkanghui.com;
+    #    allow all;
+    #    location / {
+    #        proxy_pass http://httpd_server;
+    #    }
+    #    access_log /data/logs/nginx/touch.shop.kangkanghui.com.log gzip;
+    #}
+
+    server {
+        listen        80;
+        server_name dev01-001.prod.kangkanghui.com;
+        location / {
+            proxy_pass http://httpd_server;        
+        }
+        access_log /data/logs/nginx/dev01-001.prod.kangkanghui.com.log gzip;
+    }
+
+    server {
+        listen        80;
+        server_name admin.gmy1.cn;
+        location / {
+            proxy_pass http://httpd_server;        
+        }
+        access_log /data/logs/nginx/admin.gmy1.cn.log gzip;
+    }
+    server {
+        listen        80; 
+        server_name hxl.kangkanghui.com;
+        location / { 
+            proxy_pass http://httpd_server;    
+        }   
+        access_log /data/logs/nginx/hxl.kangkanghui.com.log gzip;
+    }   
+
+    ##
+	# nginx-naxsi config
+	##
+	# Uncomment it if you installed nginx-naxsi
+	##
+
+	#include /etc/nginx/naxsi_core.rules;
+
+	##
+	# nginx-passenger config
+	##
+	# Uncomment it if you installed nginx-passenger
+	##
+	
+	#passenger_root /usr;
+	#passenger_ruby /usr/bin/ruby;
+
+	##
+	# Virtual Host Configs
+	##
+
+	# include /etc/nginx/conf.d/*.conf;
+	include /etc/nginx/sites-enabled/*;
+}
+
+
+#mail {
+#	# See sample authentication script at:
+#	# http://wiki.nginx.org/ImapAuthenticateWithApachePhpScript
+# 
+#	# auth_http localhost/auth.php;
+#	# pop3_capabilities "TOP" "USER";
+#	# imap_capabilities "IMAP4rev1" "UIDPLUS";
+# 
+#	server {
+#		listen     localhost:110;
+#		protocol   pop3;
+#		proxy      on;
+#	}
+# 
+#	server {
+#		listen     localhost:143;
+#		protocol   imap;
+#		proxy      on;
+#	}
+#}

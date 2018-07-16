@@ -1,0 +1,119 @@
+一. 安装php7.2.5
+
+1.安装编译环境  
+sudo apt-get install \
+build-essential \
+libtool \
+gcc \
+g++ \
+vim \
+autoconf \
+libiconv-hook-dev \
+libmcrypt-dev \
+libxml2-dev \
+libmysqlclient-dev \
+libcurl4-openssl-dev \
+libjpeg8-dev \
+libfreetype6-dev \
+
+
+
+2.安装php
+cd php-xxx/
+./configure --prefix=/usr/local/php/7.2.5 \
+--with-config-file-path=/etc/php/7.2.5 \
+--enable-fpm \
+--enable-pcntl \
+--enable-mysqlnd \
+--enable-opcache \
+--enable-sockets \
+--enable-sysvmsg \
+--enable-sysvsem \
+--enable-sysvshm \
+--enable-shmop \
+--enable-zip \
+--enable-soap \
+--enable-xml \
+--enable-mbstring \
+--disable-rpath \
+--disable-fileinfo \
+--with-mysqli=mysqlnd \
+--with-pdo-mysql=mysqlnd \
+--with-pcre-regex \
+--with-iconv \
+--with-zlib \
+--with-gd \
+--with-mhash \
+--with-xmlrpc \
+
+sudo make
+sudo make install
+sudo mkdir /etc/php/7.2.5
+sudo cp php.ini-development /etc/php/php.ini
+将PHP的可执行目录添加到环境变量中。打开~/.bashrc，在末尾添加如下内容：
+export PATH=/usr/local/php/7.2.5/bin:$PATH
+export PATH=/usr/local/php/7.2.5/sbin:$PATH
+保存后执行：source ~/.bashrc
+通过php -v查看php版本，完成。
+
+3. 安装curl扩展
+
+    wget http://curl.haxx.se/download/curl-7.32.0.tar.gz
+    tar zxvf curl-7.32.0.tar.gz
+    cd curl-7.32.0
+    ./configure --prefix=/usr/local/curl
+    cd /（php源码目录）/ext/curl
+    运行phpize： /（php编译目录）/bin/phpize
+    ./configure --with-php-config=/（php编译目录）/bin/php-config --with-curl=/（curl源码目录）
+    make && make install
+    修改php.ini，增加：extension=curl.so（如果没有安装过其他php扩展，则需要同时配置extension_dir="/（php编译后目录）/lib/php/extensions/no-debug-non-zts-20121212/"，上一个步骤生成.so文件的时候，会输出extension_dir目录）
+	
+4. 安装openssl扩展
+
+要用:
+./configure --with-php-config=/usr/local/php/7.2.5/bin/php-config --with-openssl=/usr
+不能用:
+./configure --with-php-config=/usr/local/php/7.2.5/bin/php-config --with-openssl=/home/hxl/ 下载/openssl-1.0.2g
+因为会报这个错: configure: error: Cannot find OpenSSL's <evp.h>
+
+
+How to solve `configure: error: Cannot find OpenSSL's <evp.h>`?: 
+Assuming that you already have the OpenSSL libraries and header files (on rpm systems the latter are in the xxxx-devel package)...
+
+The issue seems to arise from how configure resolves dependencies which are distributed around the filesystem. To compile the code, the comiler needs to know where the headers are. To link the code, the linker needs to know where the libraries are.
+
+[colin@host]$ configure .... --with-openssl-dir=/usr/include/openssl ....
+...
+checking OpenSSL dir for FTP... /usr/include/openssl
+checking for pkg-config... /usr/bin/pkg-config
+configure: error: Cannot find OpenSSL's <evp.h>
+
+[colin@host]$ find /usr/include -name evp.h
+/usr/include/openssl/evp.h
+
+The include directory has the include file, but pkg-config fails because the library is not in /usr/include/openssl, its in /usr/lib
+
+Running configure again with /usr as the directory:
+
+configure .... --with-openssl-dir=/usr ....
+...
+checking OpenSSL dir for FTP... /usr
+checking for pkg-config... /usr/bin/pkg-config
+checking for OpenSSL version... >= 0.9.6
+checking for CRYPTO_free in -lcrypto... yes
+...
+
+The path passed as an argument is searched to find the relevant resources.
+
+5. 安装swoole扩展
+
+cd swoole-src-master
+phpize
+./configure
+sudo make
+sudo make install
+swoole的./configure有很多额外参数，可以通过./configure --help命令查看,这里均选择默认项
+安装完成后，进入/etc/php目录下，打开php.ini文件，在其中加上如下一句：
+extension=swoole.so
+随后在终端中输入命令php -m查看扩展安装情况。如果在列出的扩展中看到了swoole，则说明安装成功。
+

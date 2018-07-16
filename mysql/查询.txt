@@ -1,0 +1,2 @@
+select * from a left join b
+	如果a和b是一对多, 查询结果也是一对多, 比a原始数据多

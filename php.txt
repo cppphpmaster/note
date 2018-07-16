@@ -1,8 +1,10 @@
-1.安装编译环境  (apt-get install build-essential   apt-get install libtool)
+1.安装编译环境  
 sudo apt-get install \
 build-essential \
+libtool \
 gcc \
 g++ \
+vim \
 autoconf \
 libiconv-hook-dev \
 libmcrypt-dev \
@@ -12,10 +14,13 @@ libcurl4-openssl-dev \
 libjpeg8-dev \
 libfreetype6-dev \
 
+
+
+
 2.安装php
 cd php-xxx/
-./configure --prefix=/usr/local/php \
---with-config-file-path=/etc/php \
+./configure --prefix=/usr/local/php/7.2.5 \
+--with-config-file-path=/etc/php/7.2.5 \
 --enable-fpm \
 --enable-pcntl \
 --enable-mysqlnd \
@@ -30,7 +35,6 @@ cd php-xxx/
 --enable-xml \
 --enable-mbstring \
 --disable-rpath \
---disable-debug \
 --disable-fileinfo \
 --with-mysqli=mysqlnd \
 --with-pdo-mysql=mysqlnd \
@@ -42,16 +46,21 @@ cd php-xxx/
 --with-xmlrpc \
 
 
+--with-openssl \
 --with-curl \
+
+
+
+--disable-debug \
 --with-imap-ssl
 以上PHP编译选项根据实际情况可调整
 sudo make
 sudo make install
-sudo mkdir /etc/php
+sudo mkdir /etc/php/7.2.5
 sudo cp php.ini-development /etc/php/php.ini
 将PHP的可执行目录添加到环境变量中。打开~/.bashrc，在末尾添加如下内容：
-export PATH=/usr/local/php/bin:$PATH
-export PATH=/usr/local/php/sbin:$PATH
+export PATH=/usr/local/php/7.2.5/bin:$PATH
+export PATH=/usr/local/php/7.2.5/sbin:$PATH
 保存后执行：source ~/.bashrc
 通过php -v查看php版本，完成。
 
@@ -72,6 +81,75 @@ extension=swoole.so
   2. 运行php composer.phar检测是否正常工作
   3. 把composer.phar所在目录加入环境变量, windows需要创建对应的批处理文件: echo @php "%~dp0composer.phar" %*>composer.bat
   4. composer -V查看版本
+  
+  
+安装redis扩展:
+phpredis下载地址https://github.com/phpredis/phpredis
+ 
+解压并进入源码包
+unzip phpredis-develop.zip
+cd phpredis-develop
+生成configure配置文件:/usr/local/php-7.1/bin/phpize
+编译安装:
+./configure --with-php-config=/usr/local/php-7.1/bin/php-config
+make && make install
+ 
+配置php.ini
+在extension后添加
+extension=redis.so
+
+
+
+安装curl扩展:
+（1、下载并安装 curl）
+#下载源码包
+（源码包列表）
+https://curl.haxx.se/download/  或  https://curl.haxx.se/download.html
+（或者直接下载7.55.1版本的curl包）
+wget https://curl.haxx.se/download/curl-7.55.1.tar.gz
+#解压
+tar -zxvf curl-7.55.1.tar.gz
+#进入目录
+cd curl-7.55.1
+#预编译（并指定安装位置）
+mkdir /usr/local/lib/curl
+./configure --prefix=/usr/local/lib/curl/
+#安装
+make && make install
+ 
+ 
+（2、生成 curl 扩展）
+#进入 php 源码包安装位置
+cd /data/soft/php/ext/curl
+#生成 configure 文件
+/usr/local/php/bin/phpize
+#预编译
+./configure --with-php-config=/usr/local/php/bin/php-config  --with-curl=/usr/local/lib/curl
+#安装
+make && make install
+ 
+ 
+（3、修改 php.ini）
+extension_dir="/usr/local/php/lib/php/extensions/no-debug-zts-20121212/"
+extension=curl.so
+ 
+（4、重启php-fpm）
+/usr/local/nginx/sbin/nginx -s stop       #先暂停一下 nginx
+pkill php-fpm                             #杀死 php-fpm
+/usr/local/php/sbin/php-fpm               #开启 php-fpm
+/usr/local/nginx/sbin/nginx               #开启 nginx
+
+ 
+重启php
+检查:
+[root@test etc]# /usr/local/php-7.1/bin/php -m|grep redis
+redis
+
+
+青苹果dev安装php7.2.5:
+	sudo apt-get install libxml2-dev 
+	sudo apt-get install libpng12-dev
+
   
   
 PHP-FPM: (FastCGI Process Manager：FastCGI进程管理器)是一个PHPFastCGI管理器

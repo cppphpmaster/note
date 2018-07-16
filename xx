@@ -1,0 +1,15 @@
+优先级和提升编程技术同等
+
+改正自己目的性太强的缺点
+不断锻炼
+
+
+70 //yunpian.com
+ 71 $config['sms_provider_tpl_url'] = 'https://sms.yunpian.com/v2/sms/tpl_single_send.json'; //短信服务商地址
+ 72 $config['sms_provider_tpl_id'] = '1916474'; //短信模板ID
+ 73 $config['sms_provider_market_apikey']  = '4968d32fc54da13181879fadd234479d'; //短信服务商私钥 // sms marketing
+ 74 $config['sms_provider_captcha_apikey'] = '4d27e0f6b9cd89de1e69c27ba7ced9bd'; // 专用注册登录验证码通道
+ 75 
+ 76 //手机验证码时间
+ 77 $config['phone_captcha_time'] = 60*1; //重发
+ 78 $config['phone_captcha_expired'] = 60*60; // 过期

@@ -1,0 +1,113 @@
+两种PHP邮件发送的方式
+
+有不少程序员在用PHP发送邮件的时候会遇到几个问题，那么遇到问题就要有解决问题的思路，本文就是根据php实现邮件发送的思路，整理下来的一篇文章，在遇到不同问题时给出的不同解决方法，感兴趣的小伙伴们可以参考一下。
+
+一、使用PHP内置的mail()函数
+<?php 
+$to = "test@163.com"; //收件人 
+$subject = "Test"; //主题 
+$message = "This is a test mail!"; //正文 
+mail($to,$subject,$message);
+
+结果就直接报错，如下：
+
+Warning: mail() [function.mail]: Failed to connect to mailserver at "localhost" port 25, verify your "SMTP" and "smtp_port" setting in php.ini or use ini_set() inD:/www/Zend/email/email.php on line 10
+
+分析原因：本地需要有SMTP服务器，又改了下代码：
+<?php 
+$to = "test@163.com";//收件人 
+$subject = "Test";//邮件主题 
+$message = "This is a test mail!";//邮件正文 
+ini_set('SMTP','smtp.163.com');//发件SMTP服务器 
+ini_set('smtp_port',25);//发件SMTP服务器端口 
+ini_set('sendmail_from',"admin@163.com");//发件人邮箱 
+mail($to,$subject,$message);
+
+结果还是错误：
+
+Warning: mail() [function.mail]: SMTP server response: 553 authentication is required,smtp2,DNGowKD7v5BTDo9NnplVBA--.1171S2 1301220947 inD:/www/Zend/email/email.php on line 9
+
+分析原因：需要验证信息，怎么写验证信息呢？在哪里配置呢？带着这些疑问参考一些技术文章后得出结论，使用mail()函数发送邮件就必须要有一台无需SMTP验证就可以发信的邮件服务器。但现在的SMTP邮件服务器基本上都是需要验证的，所以要想使用它发邮件就只能自己在本地搭一个不需要验证的SMTP服务器。搭建方法：用windows自带的IIS就可以，或者从网上下载其他的SMTP服务器软件。
+
+结论：使用mail()函数发送邮件，就必须要有一台不需要验证的SMTP服务器。这样的话配置工作会多一点，但是使用的时候就比较省事了，几行代码就可以。
+
+二、使用封装SMTP协议的邮件类
+
+这种方法就比较常见了，尤其对于广大自己没有服务器，从网上购买虚拟主机的同学，第一种方法不现实，所以还是自己使用SMTP协议来发送邮件吧。
+
+不过要完成这项工作的话，就需要你对SMTP协议有一定的了解，喜欢事必躬亲的同学可以自己动手写一个，喜欢拿来主义的同学就可以从网上下载了，有很多。
+
+不过我比较推荐使用PEAR扩展中的Mail类，功能强大：可以支持纯文本、HTML格式的邮件；各字段都可设置编码，正确配置不会出现中文乱码情况；可以支持附件等等。
+
+在服务器可以使用pear install Mail 命令快速安装，没有足够服务器权限的同学也可以直接下载类的PHP源码包含进来就可以了。
+
+注：Mail类依赖 Net/SMTP.php 和 Mail/mime.php ，要一块下载，使用时一块包含进来。
+
+下面我举例说明一下在Mail类发送邮件的方法吧，网上其他SMTP邮件类使用方法一块也类似，可以参考：
+<?php 
+// Pear Mail 扩展 
+require_once('Mail.php'); 
+require_once('Mail/mime.php'); 
+require_once('Net/SMTP.php'); 
+    
+$smtpinfo = array(); 
+$smtpinfo["host"] = "smtp.163.com";//SMTP服务器 
+$smtpinfo["port"] = "25"; //SMTP服务器端口 
+$smtpinfo["username"] = "username@163.com"; //发件人邮箱 
+$smtpinfo["password"] = "password";//发件人邮箱密码 
+$smtpinfo["timeout"] = 10;//网络超时时间，秒 
+$smtpinfo["auth"] = true;//登录验证 
+//$smtpinfo["debug"] = true;//调试模式 
+// 收件人列表 
+$mailAddr = array('receiver@163.com'); 
+// 发件人显示信息 
+$from = "Name <username@163.com>"; 
+// 收件人显示信息 
+$to = implode(',',$mailAddr); 
+// 邮件标题 
+$subject = "这是一封测试邮件"; 
+// 邮件正文 
+$content = "<h3>随便写点什么</h3>"; 
+// 邮件正文类型，格式和编码 
+$contentType = "text/html; charset=utf-8"; 
+//换行符号 Linux: \n Windows: \r\n 
+$crlf = "\n"; 
+$mime = new Mail_mime($crlf); 
+$mime->setHTMLBody($content); 
+$param['text_charset'] = 'utf-8'; 
+$param['html_charset'] = 'utf-8'; 
+$param['head_charset'] = 'utf-8'; 
+$body = $mime->get($param);  
+$headers = array(); 
+$headers["From"] = $from; 
+$headers["To"] = $to; 
+$headers["Subject"] = $subject; 
+$headers["Content-Type"] = $contentType; 
+$headers = $mime->headers($headers);  
+$smtp =& Mail::factory("smtp", $smtpinfo); 
+$mail = $smtp->send($mailAddr, $headers, $body); 
+$smtp->disconnect(); 
+if (PEAR::isError($mail)) { 
+  //发送失败 
+  echo 'Email sending failed: ' . $mail->getMessage()."\n"; 
+} 
+else{ 
+  //发送成功 
+  echo "success!\n"; 
+}
+
+如果从网上找的SMTP类都是高度封装的，所以使用起来比上面会更简单，但使用方法都是比较相似的。
+
+结论：这种方式发送邮件无需装任何软件，只需要包含进来一个PHP类，然后多写几行配置代码，就可以了。并且网上有很多示例的代码，很多时候只要复制过来然后修改个别的几个参数就可以用了，所以会很方便，推荐使用此方法。
+
+不管遇到哪种问题，方法千种万种，最重要的是要有解决问题的思路，希望这篇文章能给大家带来启发。
+
+相关推荐：
+
+功能强大的PHP发邮件类
+
+PHP发邮件的简单类
+
+PHP发邮件问题
+
+以上就是两种PHP邮件发送的方式的详细内容，更多请关注php中文网其它相关文章！

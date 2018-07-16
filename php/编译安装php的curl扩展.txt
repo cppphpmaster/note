@@ -1,0 +1,92 @@
+    wget http://curl.haxx.se/download/curl-7.32.0.tar.gz
+    tar zxvf curl-7.32.0.tar.gz
+    cd curl-7.32.0
+    ./configure --prefix=/usr/local/curl
+    cd /（php源码目录）/ext/curl
+    运行phpize： /（php编译目录）/bin/phpize
+    ./configure --with-php-config=/（php编译目录）/bin/php-config --with-curl=/（curl源码目录）
+    make && make install
+    修改php.ini，增加：extension=curl.so（如果没有安装过其他php扩展，则需要同时配置extension_dir="/（php编译后目录）/lib/php/extensions/no-debug-non-zts-20121212/"，上一个步骤生成.so文件的时候，会输出extension_dir目录）
+
+
+
+
+0. php -m加载curl.so报错时, make clean后重新编译安装curl
+1. sudo mkdir /usr/local/php/7.2.5/curl/
+2. cd download/curl, ./configure --prefix=/usr/local/php/7.2.5/curl/
+3. sudo make,  sudo make install
+
+4. cd /usr/local/php/7.2.5/ext/curl
+5. phpize
+6. ./configure --with-curl=/usr/local/php/7.2.5/curl --with-php-config=/usr/local/php/7.2.5/bin/php-config
+7. sudo make, sudo make install
+8. sudo vim /etc/php/php.ini, 新增extension=curl.so
+
+
+./configure --with-curl=/home/hxl/下载/php-7.2.5/ext/curl --with-php-config=/usr/local/php/7.2.5/bin/php-config
+
+
+先声明,本文档适合在本地虚拟机安装的centos,php7版本上面
+
+折腾近一上午,终于解决了该问题
+
+是因为下载curl安装后,虽然制定到了/usr/local/curl目录,但是并无法执行phpize,因为必须要到/lamp/php-7.0.7下边的ext下边的curl才能执行phpize,这样才会生活curl.so
+
+php源码目录：/lamp/php-7.0.7
+
+php编译目录：/usr/local/php/
+
+curl源码目录：/root/curl-7.32.0
+
+1.curl，主要用于发送http请求，是php的一个扩展包。
+2.安装过程：
+（1）curl下载：http://curl.haxx.se/download.html
+（2）具体安装过程：
+
+    wget http://curl.haxx.se/download/curl-7.32.0.tar.gz
+
+    tar zxvf curl-7.32.0.tar.gz 
+    cd curl-7.32.0
+    ./configure --prefix=/usr/local/curl
+    cd  /（php源码目录，不是php编译目录）/ext/curl
+    运行phpize： /（php编译目录）/bin/phpize
+    ./configure --with-php-config=/（php编译目录）/bin/php-config  --with-curl=/（curl源码目录）
+    以我的为例为:./configure --with-php-config=/usr/local/php/bin/php-config --with-curl=/usr/local/curl
+	
+	// 如果后面报错: PHP Warning:  PHP Startup: Invalid library (maybe not a PHP library) 'curl.so' in Unknown on line 0
+	// 就先make clean再重新编译安装
+    make && make install
+    修改php.ini，增加：extension=curl.so（如果没有安装过其他php扩展，则需要同时配置extension_dir="/（php编译后目录）/lib/php/extensions/no-debug-non-zts-20121212/"，上一个步骤生成.so文件的时候，会输出extension_dir目录）
+
+（3）检验是否安装成功：
+
+    /（php编译后目录）/bin/php -m | grep curl ——正常打印curl，则表示安装成功（php -m会打印出已安装的扩展模块）
+
+3.踩过的坑：
+（1）直接在curl的源码目录最上层，运行phpize，提示如下错误：
+Cannot find config.m4. 
+Make sure that you run '/home/zhuyx/local/php-5.5.3/bin/phpize' in the top level source directory of the module
+原因：
+　　phpize扩展安装，源包需要有config.m4这个配置文件；当前扩展的源码包不包含（memcache的就包含）。
+ 
+解决方法：
+（1）进入php源码包的 ext/curl 下面运行phpize，再进行安装
+（2）./configure --with-php-config=/php编译后目录/bin/php-config  --with-curl=curl源码目录
+ 
+问题扩展：
+　　安装其他的php扩展的时候，遇到类似问题，都可以采取上述解决方案。
+ 
+（2）关于php.ini
+　　楼主一开始修改的是 php编译后目录/lib/php.ini 这个文件，修改之后新增模块并不生效。后来才知道，前面这个是默认（编译时候不指定）的扩展配置目录，如果编译的时候指定了php.ini的目录，以后都需要修改指定目录下的php.ini，例如楼主的是 php编译后目录/php.ini 。
+ 
+（3）调用curl()的php脚本，命令行可以运行，浏览器访问提示如下错误：
+　　Fatal Error：Call to undefined function curl()
+ 
+原因：
+　　楼主的服务器是nginx，安装了curl扩展后，没有重启php-fpm导致。
+ 
+解决方法：
+　　重启php-fpm.
+　　ps aux | grep php-fpm （找到master进程）
+　　kill -SIGINT master进程
+　　进入php-5.5.3/sbin，执行  ./php-fpm（启动）
