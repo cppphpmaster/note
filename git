@@ -9,5 +9,5 @@
 	6. 把本地仓库中的文件同步刀远程仓库中。其中master为远程仓库的分支名:
 		git push -u origin master
 	7. 最后可以查看状态： git status
-	8.
+	8. clone分支： git clone -b 5.2 https://xxx.git
 
