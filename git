@@ -4,6 +4,11 @@
 	2. git config --global user.email "18301805881@163.com"
 	3. git config --global core.editor vim
 
+查看远程仓库地址 - 
+	git remote -v
+
+查看远程分支 - 
+	git branch -a
 
 把本地项目上传到github
 	1. 进入上传文件的目录， 初始化本地仓库: git init
