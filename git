@@ -1,3 +1,10 @@
+初次运行git设置 - 
+	0. ssh-keygen
+	1. git config --global user.name "hxl"
+	2. git config --global user.email "18301805881@163.com"
+	3. git config --global core.editor vim
+
+
 把本地项目上传到github
 	1. 进入上传文件的目录， 初始化本地仓库: git init
 	2. 把本地文件添加刀本地仓库暂存区: git add . 或 git add [filename]
