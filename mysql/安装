@@ -1,0 +1,21 @@
+1. 安装
+	sudo apt-get install mysql-server
+2. 配置
+	sudo mysql_secure_installation
+3. 检查mysql服务状态
+	systemctl status mysql.service
+4. 设置root密码
+	sudo mysql -uroot -p
+	GRANT ALL PRIVILEGES ON *.* TO root@localhost IDENTIFIED BY "toor";
+5. 新建数据库和用户
+	create database hxldb;
+	grant all privileges on hxldb.* to hxl@localhost identified by "toor"
+6. 允许某用户远程登陆mysql
+	grant all privileges on hxldb.* to hxl@"%" identified by "toor"
+	sudo vim /etc/mysql/my.cnf, 在最后添加如下配置， 允许其他机器访问mysql
+	skip-networking => # skip-networking
+	
+
+	
+	
+	
