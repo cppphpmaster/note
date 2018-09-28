@@ -20,8 +20,8 @@ libfreetype6-dev \
 
 2.安装php
 cd php-xxx/
-./configure --prefix=/usr/local/php/7.2.5 \
---with-config-file-path=/etc/php/7.2.5 \
+./configure --prefix=/usr/local/php/7.2.10 \
+--with-config-file-path=/etc/php/7.2.10 \
 --enable-fpm \
 --enable-pcntl \
 --enable-mysqlnd \
@@ -48,20 +48,20 @@ cd php-xxx/
 
 sudo make
 sudo make install
-sudo mkdir /etc/php/7.2.5
-sudo cp php.ini-development /etc/php/php.ini
+sudo mkdir /etc/php/7.2.10
+sudo cp php.ini-development /etc/php/7.2.10/php.ini
 将PHP的可执行目录添加到环境变量中。打开~/.bashrc，在末尾添加如下内容：
-export PATH=/usr/local/php/7.2.5/bin:$PATH
-export PATH=/usr/local/php/7.2.5/sbin:$PATH
+export PATH=/usr/local/php/7.2.10/bin:$PATH
+export PATH=/usr/local/php/7.2.10/sbin:$PATH
 保存后执行：source ~/.bashrc
 通过php -v查看php版本，完成。
 
 3. 安装curl扩展
 
-    wget http://curl.haxx.se/download/curl-7.32.0.tar.gz
-    tar zxvf curl-7.32.0.tar.gz
-    cd curl-7.32.0
-    ./configure --prefix=/usr/local/curl
+    wget http://curl.haxx.se/download/curl-7.61.1.tar.gz
+    tar zxvf curl-7.61.1.tar.gz
+    cd curl-7.61.1
+    ./configure --prefix=/usr/local/curl/7.61.1
     cd /（php源码目录）/ext/curl
     运行phpize： /（php编译目录）/bin/phpize
     ./configure --with-php-config=/（php编译目录）/bin/php-config --with-curl=/（curl源码目录）
@@ -117,3 +117,9 @@ swoole的./configure有很多额外参数，可以通过./configure --help命令
 extension=swoole.so
 随后在终端中输入命令php -m查看扩展安装情况。如果在列出的扩展中看到了swoole，则说明安装成功。
 
+
+
+查看php扩展 - 
+	1. php -m
+	2. php --ri swoole
+	3. php --info
