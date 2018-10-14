@@ -1,0 +1,57 @@
+go的安装卸载
+
+卸载 - 
+	sudo rm  -rf /usr/lib/go-1.10
+	sudo rm -rf /usr/bin/go
+
+安装 -
+	https://www.cnblogs.com/tinywan/p/6928300.html
+
+2.wget https://codeload.github.com/golang/go/tar.gz/go1.11.1
+
+sudo tar -xzf go-go1.11.1.tar.gz -C /usr/local
+sudo ln -s /usr/local/go/bin/ /usr/bin/
+3.mkdir -p $HOME/go-workspace/src
+
+ mkdir -p $HOME/go-workspace/pkg
+
+ mkdir -p $HOME/go-workspace/bin
+
+4. sudo vim $HOME/.bashrc
+
+尾行插入
+
+export GOROOT=/usr/local/go #设置为go安装的路径，有些安装包会自动设置默认的goroot
+
+export GOPATH=$HOME/go-workspace #默认安装包的路径
+
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
+按Esc 键，: wq 保存退出。使配置文件生效
+
+source $HOME/.bashrc　　#注：这里不要用sudo执行，sudo无该命令
+
+go env 
+
+5.
+
+首先创建一个名为 hello.go 的文件，并将以下代码保存在其中：
+
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Printf("hello, world\n")
+}
+
+     
+
+接着通过 go 工具运行它：
+
+go run hello.go
+
+     
+
+若看到了“hello, world”信息，那么Go已被正确安装。
+
