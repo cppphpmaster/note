@@ -1,3 +1,5 @@
+sduo vim /etc/vim/vimrc
+
 "显示行号
 set nu
 "自动缩进
