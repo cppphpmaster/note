@@ -8,6 +8,9 @@
   tar jcf work.tar.bz2 work/
   tar cf work.tar work
   
+  scp from to
+  scp root@www.runoob.com:/home/root/others/music/xx.mp3 /home/space/music
+  
   lrzsz: sz下载, lz上传
   查看进程: ps -ef | grep mysqld
   lsof: (list open files) 显示系统打开的文件，因为 lsof 需要访问核心内存和各种文件，所以必须以 root 用户的身份运行它才能够充分地发挥其功能
