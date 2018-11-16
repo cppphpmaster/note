@@ -144,3 +144,12 @@ extension=swoole.so
 	3. 重启服务
 	sudo service nginx restart
 	sudo /etc/init.d/php-fpm restart 
+	
+8. 安装mysql扩展
+	install mysql in linux
+	cd php源码目录/ext/mysql
+	phpize
+	./configure
+	sudo make
+	sudo make install
+	vim /etc/php/xx/php.ini  加入extension=mysql.so
