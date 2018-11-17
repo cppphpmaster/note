@@ -8,6 +8,8 @@
   tar jcf work.tar.bz2 work/
   tar cf work.tar work
   
+ssh登录: ssh -p 12333 root@216.230.230.114
+  
   scp from to
   scp root@www.runoob.com:/home/root/others/music/xx.mp3 /home/space/music
   
