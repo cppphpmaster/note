@@ -1,0 +1,12 @@
+1. vue-element-admin中, axios发送post请求时服务端通过$_POST获取不到参数: https://blog.csdn.net/csdn_yudong/article/details/79668655\
+    /*
+     * php://input allows you to read raw POST data.
+     * It is a less memory intensive alternative to $HTTP_RAW_POST_DATA and does not need any special php.ini directives.
+     * php://input is not available with enctype=”multipart/form-data”.
+     */
+    $tmpParam = file_get_contents("php://input");
+    if (empty($_POST) && !empty($tmpParam)) {
+        $_POST = json_decode($tmpParam, true);
+    }
+
+

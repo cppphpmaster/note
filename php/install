@@ -62,9 +62,12 @@ export PATH=/usr/local/php/7.2.10/sbin:$PATH
     tar zxvf curl-7.61.1.tar.gz
     cd curl-7.61.1
     ./configure --prefix=/usr/local/curl/7.61.1
+    make
+    make install
+
     cd /（php源码目录）/ext/curl
     运行phpize： /（php编译目录）/bin/phpize
-    ./configure --with-php-config=/（php编译目录）/bin/php-config --with-curl=/（curl源码目录）
+    ./configure --with-php-config=/（php编译目录）/bin/php-config --with-curl=/usr/local/curl/7.61.1 (curl安装目录)
     make && make install
     修改php.ini，增加：extension=curl.so（如果没有安装过其他php扩展，则需要同时配置extension_dir="/（php编译后目录）/lib/php/extensions/no-debug-non-zts-20121212/"，上一个步骤生成.so文件的时候，会输出extension_dir目录）
 	

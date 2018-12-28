@@ -1,0 +1,25 @@
+nginx跨域问题解决:
+    1.	vi /etc/nginx/nginx.conf
+    	加入如下代码
+    	http {
+    	###start####
+    	add_header Access-Control-Allow-Origin *;
+    	add_header Access-Control-Allow-Headers X-Requested-With;
+    	add_header Access-Control-Allow-Methods GET,POST,OPTIONS;
+    	###end ###
+    	}
+    	service nginx restart 重启nginx。
+    2. php入口文件加入
+        //header("Access-Control-Allow-Origin:*"); // 允许其他域名访问; todo 貌似nginx配置了, 这里不能再配置, 确认
+        header('Access-Control-Allow-Methods:OPTIONS,POST'); // 响应类型
+        header('Access-Control-Allow-Headers:x-requested-with,content-type,x-token'); // 响应头设置
+        if((strtolower($_SERVER['REQUEST_METHOD']) == 'options')
+            || (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"])=="xmlhttprequest")){ // 判断是否为 options (ajax) 请求
+            echo json_encode($ret);
+            ob_flush();
+            exit();
+        }
+
+
+    3. options请求静态文件问题
+        在请求url中加入入口文件 index.php (权宜之计, 最完美要配置nginx支持请求静态文件)
