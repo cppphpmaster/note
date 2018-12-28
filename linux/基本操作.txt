@@ -7,6 +7,8 @@
   tar zcf work.tar.gz work/
   tar jcf work.tar.bz2 work/
   tar cf work.tar work
+
+  查找文件: find / -name filename
   
 ssh登录: ssh -p 12333 root@216.230.230.114
   

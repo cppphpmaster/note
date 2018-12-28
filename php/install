@@ -153,3 +153,17 @@ extension=swoole.so
 	sudo make
 	sudo make install
 	vim /etc/php/xx/php.ini  加入extension=mysql.so
+
+9. nginx配置并运行多个php版本
+    1.修改php7的php-fmp服务端口号
+        进入到目录：/usr/local/php/5.7.xx/etc 修改php-fpm.conf这个文件的监听端口listen = 127.0.0.1:9001
+        启动php-fpm
+
+    2. 现在的情况是：PHP5.6的php-fpm监听的是 127.0.0.1:9000, PHP7.1的php-fpm监听的是 127.0.0.1:9001,
+        如果需要同时启用就都启动这两个php-fpm,
+        进入nginx配置目录/usr/local/etc/nginx/nginx.conf：（注意看两个server 的 fastcgi_pass:后面监听的端口）
+         PHP5.6: 9987-> 127.0.0.1:9000
+         PHP7.1: 9988-> 127.0.0.1:9009
+
+    3. 重启nginx
+
