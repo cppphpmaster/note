@@ -10,7 +10,10 @@ nginx跨域问题解决:
     	}
     	service nginx restart 重启nginx。
     2. php入口文件加入
-        //header("Access-Control-Allow-Origin:*"); // 允许其他域名访问; todo nginx这句要注释掉, apache这句要打开, 保持服务器跨域配置一致;
+        // 允许其他域名访问; todo nginx这句要注释掉, apache这句要打开, 保持服务器跨域配置一致;
+        // 如果这句错误, 会导致options请求返回200, 但是收不到任何服务数据; 也不会发送post请求
+        //header("Access-Control-Allow-Origin:*");
+
         header('Access-Control-Allow-Methods:OPTIONS,POST'); // 响应类型
         header('Access-Control-Allow-Headers:x-requested-with,content-type,x-token'); // 响应头设置
         if((strtolower($_SERVER['REQUEST_METHOD']) == 'options')
