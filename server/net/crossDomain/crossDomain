@@ -10,7 +10,7 @@ nginx跨域问题解决:
     	}
     	service nginx restart 重启nginx。
     2. php入口文件加入
-        //header("Access-Control-Allow-Origin:*"); // 允许其他域名访问; todo 貌似nginx配置了, 这里不能再配置, 确认
+        //header("Access-Control-Allow-Origin:*"); // 允许其他域名访问; todo nginx这句要注释掉, apache这句要打开, 保持服务器跨域配置一致;
         header('Access-Control-Allow-Methods:OPTIONS,POST'); // 响应类型
         header('Access-Control-Allow-Headers:x-requested-with,content-type,x-token'); // 响应头设置
         if((strtolower($_SERVER['REQUEST_METHOD']) == 'options')
@@ -19,6 +19,23 @@ nginx跨域问题解决:
             ob_flush();
             exit();
         }
+
+        apache跨域配置:
+            <VirtualHost *:8102>
+            DocumentRoot "E:/repository/i/backstage/server  "
+            <Directory "E:/repository/i/backstage/server/">
+            AllowOverride All
+            Options Indexes FollowSymLinks
+            Require all granted
+            </Directory>
+            </VirtualHost>
+
+        nginx跨域配置:
+            在http中加入:
+                 add_header Access-Control-Allow-Origin *;
+                 add_header Access-Control-Allow-Headers X-Requested-With;
+                 add_header Access-Control-Allow-Methods GET,POST,OPTIONS;
+                 #add_header Access-Control-Allow-Credentials true;
 
 
     3. options请求静态文件问题
