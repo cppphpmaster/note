@@ -1,0 +1,5 @@
+0. 破解版: https://blog.csdn.net/gu_wen_jie/article/details/79136475
+1. /usr/local/bin/pstorm
+2. PHPstorm中如何让花括号跟在方法名后面，而不是另起一行: 
+	在setting -> editor -> code style -> php -> Wrapping and Braces -> Braces placement In function declaration 选择End of line
+3. 默认注释:  settings -> file and code templates -> includes -> php file header
