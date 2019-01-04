@@ -161,3 +161,5 @@ PHP-FPM: (FastCGI Process Manager：FastCGI进程管理器)是一个PHPFastCGI�
 
 
 关闭opcache: 修改php.ini配置项 opcache.enable_cli和opcache.enable
+
+配置开机启动和service命令: https://www.cnblogs.com/tongl/p/7217283.html

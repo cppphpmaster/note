@@ -30,5 +30,7 @@ nginx简单的操作命令
     sudo nginx -s stop      #停止
     sudo nginx -s restart   #重新启动
     sudo nginx -s reload    #重新加载配置
+
+配置开机启动和service命令: https://www.cnblogs.com/foundwant/p/5574965.html
 	
 	
