@@ -1,18 +1,23 @@
  <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <!-- 防止手机字体太小 -->
+  <meta
+charset="UTF-8"
+name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
  <!-- import Vue before Element -->
- <script src="vue/vueDev.js"></script>
+ <script src="./client/vue/vueDev.js"></script>
 
  <!-- axios 引入 -->
- <script src="axios/axios.js"></script>
+ <script src="./client/axios/axios.js"></script>
  
   <!-- element-ui 引入样式 -->
-<link rel="stylesheet" href="element-ui/index.css">
+<link rel="stylesheet" href="./client/element-ui/index.css">
 
  <!-- element-ui 引入组件库 -->
- <script src="element-ui/index.js"></script>
+ <script src="./client/element-ui/index.js"></script>
 </head>
 <body>
 
@@ -24,21 +29,21 @@
         prop="userName"
         label="账号"
       >
-        <el-input v-model="form1.userName" placeholder="4~10位限英文数字" style="width:400px" clearable auto-complete="off"/>
+        <el-input v-model="form1.userName" placeholder="4~10位限英文数字" style="width:358px" clearable auto-complete="off"/>
       </el-form-item>
 
       <el-form-item
         prop="pass"
         label="密码"
       >
-        <el-input v-model="form1.pass" type="password" placeholder="6~15位限英文数字" style="width:400px" clearable auto-complete="off"/>
+        <el-input v-model="form1.pass" type="password" placeholder="6~15位限英文数字" style="width:358px" clearable auto-complete="off"/>
       </el-form-item>
 
       <el-form-item
         prop="passRepeat"
         label="确认密码"
       >
-        <el-input v-model="form1.passRepeat" type="password" style="width:400px" clearable auto-complete="off"/>
+        <el-input v-model="form1.passRepeat" type="password" style="width:358px" clearable auto-complete="off"/>
       </el-form-item>
 
       <el-form-item
@@ -61,7 +66,8 @@
 
 <script>
 
-var requestUrl = 'http://127.0.0.1:8107/index.php';
+var serverUrl = 'server/index.php';
+var okUrl = './ok.html';
 
 new Vue({
   el: '#app', 
@@ -100,7 +106,7 @@ new Vue({
       }
 
       var ret = axios({
-        url: requestUrl,
+        url: serverUrl,
         method: 'post',
         data
       })
@@ -121,7 +127,7 @@ new Vue({
       }
 
       var ret = axios({
-        url: requestUrl,
+        url: serverUrl,
         method: 'post',
         data
       })
@@ -142,6 +148,7 @@ new Vue({
                 message: '',
                 type: 'success'
               })
+              window.location.href = okUrl
             } else {
               this.$notify({
                 title: '注册失败!! ' + response.data.data['msg'],
