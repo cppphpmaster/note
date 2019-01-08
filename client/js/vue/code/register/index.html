@@ -1,0 +1,172 @@
+ <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+ <!-- import Vue before Element -->
+ <script src="vue/vueDev.js"></script>
+
+ <!-- axios 引入 -->
+ <script src="axios/axios.js"></script>
+ 
+  <!-- element-ui 引入样式 -->
+<link rel="stylesheet" href="element-ui/index.css">
+
+ <!-- element-ui 引入组件库 -->
+ <script src="element-ui/index.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+    <el-form ref="form1" :model="form1" :rules="rules1" align="center" style="margin-top: 30px" label-position="top" label-width="80px" inline-message>
+
+      <el-form-item
+        prop="userName"
+        label="账号"
+      >
+        <el-input v-model="form1.userName" placeholder="4~10位限英文数字" style="width:400px" clearable auto-complete="off"/>
+      </el-form-item>
+
+      <el-form-item
+        prop="pass"
+        label="密码"
+      >
+        <el-input v-model="form1.pass" type="password" placeholder="6~15位限英文数字" style="width:400px" clearable auto-complete="off"/>
+      </el-form-item>
+
+      <el-form-item
+        prop="passRepeat"
+        label="确认密码"
+      >
+        <el-input v-model="form1.passRepeat" type="password" style="width:400px" clearable auto-complete="off"/>
+      </el-form-item>
+
+      <el-form-item
+        label="验证码"
+        prop="verifyCodeInput"
+      >
+      {{ verifyCode }}
+        <el-input v-model="form1.verifyCodeInput" style="width:358px" clearable auto-complete="off"/>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit('form1')">确认注册</el-button>
+      </el-form-item>
+
+    </el-form>
+
+  </div>
+  
+</body>
+
+<script>
+
+var requestUrl = 'http://127.0.0.1:8107/index.php';
+
+new Vue({
+  el: '#app', 
+  data: {
+    form1: {
+        userName: '',
+        pass: '',
+        passRepeat: '',
+        verifyCodeInput: ''
+      },
+      verifyCode: '',
+
+      rules1: {
+        userName: [
+          { required: true, message: '请输入账号', trigger: 'blur' }
+        ],
+        pass: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        passRepeat: [
+          { required: true, message: '请确认密码', trigger: 'blur' }
+        ],
+        verifyCodeInput: [
+          { required: true, message: '请输入验证码', trigger: 'blur' }
+        ]
+      }
+  },
+
+  methods: {
+    // 获取验证码
+    getVerifyCode() {
+      const data = {
+        cmd: 8,
+        param: {
+        }
+      }
+
+      var ret = axios({
+        url: requestUrl,
+        method: 'post',
+        data
+      })
+
+      return ret
+    },
+
+    // 注册
+    register(userName, pass, passRepeat, verifyCode) {
+      const data = {
+        cmd: 7,
+        param: {
+          userName: userName,
+          pass: pass,
+          passRepeat: passRepeat,
+          verifyCode: verifyCode
+        }
+      }
+
+      var ret = axios({
+        url: requestUrl,
+        method: 'post',
+        data
+      })
+
+      return ret
+    },
+
+    onSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.register(this.form1.userName, this.form1.pass, this.form1.passRepeat, this.form1.verifyCodeInput).then(response => {
+            if (response.data.code === 0) {
+              this.getVerifyCode().then(response => {
+                this.verifyCode = response.data.data['verifyCode']
+              })
+              this.$notify({
+                title: '注册成功',
+                message: '',
+                type: 'success'
+              })
+            } else {
+              this.$notify({
+                title: '注册失败!! ' + response.data.data['msg'],
+                message: '',
+                type: 'error'
+              })
+            }
+          })
+        } else {
+          this.$notify({
+            title: '检验不通过, 请检查错误提示',
+            message: '',
+            type: 'warning'
+          })
+        }
+      })
+    }
+  },
+
+  created() {
+    this.getVerifyCode().then(response => {
+      this.verifyCode = response.data.data['verifyCode']
+    })
+  },
+})
+</script>
+
+</html>

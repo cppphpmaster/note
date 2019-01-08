@@ -1,0 +1,12 @@
+都可以把js文件下载到本地引入.
+
+安装vue -
+    1. 下载后引入: <script src="./vueDev.js"></script>
+    2. cdn引入指定版本号: <script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.js"></script>
+
+安装element-ui -
+    引入样式: <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    引入组件库 (在引入vue之后): <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+安装axios -
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
