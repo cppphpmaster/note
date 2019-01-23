@@ -1,0 +1,5 @@
+1. 手机显示文字太小:
+      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+2. 修改element-ui中组件的大小, 比如一般只有medium, small, mini:
+    继承该组件, 修改它的大小

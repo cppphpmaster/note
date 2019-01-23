@@ -43,3 +43,14 @@ nginx跨域问题解决:
 
     3. options请求静态文件问题
         在请求url中加入入口文件 index.php (权宜之计, 最完美要配置nginx支持请求静态文件)
+
+
+apache跨域配置:
+    <VirtualHost *:8106>
+    DocumentRoot "D:/apache_path/vueRegister"
+    <Directory "D:/apache_path/vueRegister/">
+    AllowOverride All
+    Options Indexes FollowSymLinks
+    Require all granted
+    </Directory>
+    </VirtualHost>

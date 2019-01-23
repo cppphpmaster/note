@@ -1,0 +1,2 @@
+1. apache和nginx跨域问题  统一代码, 目前nginx服务器需要注释index.php中一行代码, apache又不能注释
+2. nginx跨域静态文件问题, 目前必须请求地址加上index.php
