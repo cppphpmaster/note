@@ -17,3 +17,5 @@ mysql int(3)不影响存储容量, 加上zerofill后3才表现出有点点效果
 如果使用关键子作为字段，这样能防止报错： `describe`
 
 判断一个表是否存在 - SELECT table_name FROM information_schema.TABLES WHERE table_name ='yourname';
+
+远程连接及权限配置: https://www.cnblogs.com/linjiqin/p/5270938.html
