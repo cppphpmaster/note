@@ -1,0 +1,5 @@
+1. $GET, $POST, $REQUEST:
+    php.ini中variables_order = "EGPCS"的含义:
+    设定 EGPCS（Environment，GET，POST，Cookie，Server）变量解析的顺序。默认设定为“EGPCS”。
+    举例说，将其设为“GP”，会导致 PHP 完全忽略环境变量，cookies 和 server 变量，
+    并用 GET 方法的变量覆盖 POST 方法的同名变量。
