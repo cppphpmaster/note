@@ -1,0 +1,30 @@
+1. 二位数组按某个键值排序
+$arr=[
+    array(
+        'name'=>'小坏龙',
+        'age'=>28
+    ),
+    array(
+        'name'=>'小坏龙2',
+        'age'=>14
+    ),
+    array(
+        'name'=>'小坏龙3',
+        'age'=>59
+    ),
+    array(
+        'name'=>'小坏龙4',
+        'age'=>23
+    ),
+    array(
+        'name'=>'小坏龙5',
+        'age'=>23
+    ),
+    array(
+        'name'=>'小坏龙6',
+        'age'=>21
+    ),
+];
+array_multisort(array_column($arr,'age'),SORT_DESC,$arr);
+
+
