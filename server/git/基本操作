@@ -1,3 +1,5 @@
+git支持https和git两种传输协议, 大多数 Git 服务器都会选择使用 SSH 公钥来进行授权.
+
 初次运行git设置 - 
 	0. ssh-keygen
 	1. git config --global user.name "hxl"
