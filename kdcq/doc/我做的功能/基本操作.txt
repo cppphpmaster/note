@@ -1,0 +1,32 @@
+1. �ܽ�
+�ձ����ܱ�: ����12��֮ǰ
+
+�ϰ�: 9:30
+���: 9:40
+
+tb�����������Ӵ�
+
+
+
+2. ���� -
+tb: Kdcq8888
+git: Kdcq8888
+
+��Ŀ��ַ: 
+	http://gitlab.koudai.com:800/users/sign_in
+	git@gitlab.koudai.com:koudai/yqoxj2_server.git  
+	����gitlab��վÿ����ת������Ҫ�Լ��ֶ����Ӷ˿�800 ����http://gitlab.koudai.com:800
+
+git: /c/Users/ftd20/.ssh
+
+git@gitlab.koudai.com:800/yqoxj2_server.git
+
+����˱�����ҳ����, ��ֱ�Ӳ���������, ���ÿͻ���
+
+
+3. ����
+�����ʽ: http://localhost:8888/api/test/setLevel
+
+问顺利
+
+
