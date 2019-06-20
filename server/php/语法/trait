@@ -1,0 +1,3 @@
+用法:
+    在test.php文件头部, use Core\unitAjax;  其中unitAjax是一个trait
+    test.php的类Test中use unitAjax, 这样Test对象就拥有了unitAjax中的方法, 跟自己定义的方法一样去使用.

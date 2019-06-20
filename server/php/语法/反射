@@ -1,0 +1,11 @@
+https://blog.csdn.net/zhang197093/article/details/72932014
+
+用途:
+    1. 获取类的所有方法和属性
+        $ref = new ReflectionClass($className);
+        $consts = $ref->getConstants(); //返回所有常量名和值
+        $props = $ref->getDefaultProperties();  //返回类中所有属性
+        $methods = $ref->getMethods();     //返回类中所有方法
+        foreach ($methods as $method) {
+            echo $method->getName() . PHP_EOL;
+        }

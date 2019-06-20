@@ -1,0 +1,4 @@
+一. 执行流程
+    1. http://localhost:9999/operation/activity-edit  进入入口文件...\public\index.php
+    2. boot::run(), router::request($URI)解析请求信息, 得到controller类名, 参数等
+    3. 调用controller->run($action = '', ...$args)方法, 该方法在unitDoAction这个trait中定义的, controller类的父类use了该trait
