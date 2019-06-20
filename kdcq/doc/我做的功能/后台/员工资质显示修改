@@ -1,0 +1,64 @@
+{"404":1,"402":1,"101":1,"201":1,"302":1}
+{"男人帮(1星)":1,"瑞丽(1星)":1,"营销管理(1星)":1,"公关顾问(1星)":1,"酒文化(1星)":1}
+综合资质: 11
+
+css控制宽度, 字段换行
+
+
+
+
+
+404 => [
+			'id' => 404,
+			'name' => '男人帮',
+			'star' => 4,
+			'type' => 'M',
+			'talent' => 4,
+			'talentIncr' => 4,
+			'bookExp' => 800,
+			'bookLevelUpRate' => 1,
+			'scroll' => [
+				[
+					'cid' => 20217,
+					'num' => 1,
+				],
+			],
+			'scrollLevelUpRate' => 0.25,
+			'bible' => [
+				[
+					'cid' => 20224,
+					'num' => 1,
+				],
+			],
+			'bibleLevelUpRate' => 1,
+			'pic' => 'icon\\funicon2',
+		],
+
+资质 = talent + (lv - 1) * talentIncr
+
+
+businessTalent => 营销资质
+farmingTalent => 公关资质
+politicsTalent => 酒艺资质
+militaryTalent => 颜值资质
+
+红颜资质：数值
+红颜资质：数值
+红颜资质：数值
+红颜资质：数值
+
+营销资质: 
+公关资质: 
+酒艺资质: 
+颜值资质: 
+
+
+这几个type对应的资质名字是这几个把, 我这边没有具体资质名字, 这几个的前缀在zh_cn.ini里面有.
+militaryTalent => 颜值资质
+farmingTalent => 公关资质
+bussinessTalent => 营销资质
+politicsTalent => 酒艺资质
+
+
+男人帮(颜值1星): LV1
+综合资质: 11,  颜值: 2, 公关: 2, 营销: 2, 酒艺: 2
