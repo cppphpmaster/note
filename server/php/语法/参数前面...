@@ -1,0 +1,5 @@
+这是PHP5.6添加的功能.
+可以通过...将函数参数存储在紧接的可遍历的变量中.
+$num = [1, 2, 3];
+function add($a, $b, $c) {} 或 function add(1, ...$args) 或 function add(...$args)
+add(1, ...$num) - 表示add1后面的参数循环从$num中取出赋值, 及 add(1, 1, 2, 3)
