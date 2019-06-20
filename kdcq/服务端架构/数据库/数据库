@@ -1,0 +1,10 @@
+bar_admin：后台管理相关的数据：登录账号、菜单、权限等
+bar_base：业务相关，跨服的，或是通用的数据
+bar_server_%s：业务数据库，一个服对应一个数据库，所有角色的数据都在服务器的数据库里面
+bar_stat：统计数据库，存放统计相关数据
+
+数据库访问的类：工程目录下的data目录。数据库与目录对应关系：
+bar_admin：admin
+bar_base：base
+bar_server_%s：server
+bar_stat：stat
