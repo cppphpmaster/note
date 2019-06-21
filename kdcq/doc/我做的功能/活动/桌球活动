@@ -1,0 +1,35 @@
+清空桌球活动:
+1. 清空mysql:
+delete from activity_darts_rank;
+delete from activity_rank where id = 飞镖活动id;
+delete from activity_alliance_member_rank where id = 飞镖活动id;
+
+2. 删除redis:
+del roleDartsScore_xxxxxx  
+del allianceDartsScore_xxxxxx
+
+
+一. 接口
+3.进服
+
+28. 道具商城进入 缺少storage, 要补充接口文档
+
+冲榜活动排名 -> 进入排名奖励的接口
+
+个人冲榜活动榜单 - 性质跟前十个人排行榜一样
+/activity/allianceRankList.api - 商会榜单
+/activity/allianceGetRankReward.api - 商会领奖
+邮件发奖脚本
+活动积分,道具未用完的保留到下次该活动, 不能超过库存上限 -> 判断是否已有判断
+
+配置:
+ 4个台球积分道具, 根据类型判断
+
+配置文件解析:
+CustomerOrganicer.php
+python 运行 解析, 解析后会同步到服务端对应目录, 保证bar_config, bar_server, bar_design
+
+====
+todo.
+1. tb加任务
+2. 给出文档先
