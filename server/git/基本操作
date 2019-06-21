@@ -35,7 +35,19 @@ git支持https和git两种传输协议, 大多数 Git 服务器都会选择使�
 
 
 
+merge失败回滚:
+1、命令
+⑴ git reflog
+查看merge操作的上一个提交记录的版本号
 
+⑵ git reset –hard 版本号
+这样可以回滚到merge之前的状态
+2、示例
+误将dev合并到了master分支，现要回滚merge操作
+⑴ 首先git reflog
+ee0ee93 HEAD@{0}: merge dev: Merge made by the ‘recursive’ strategy.
+7335548 HEAD@{1}: checkout: moving from dev to master
+可以看到需要回滚到 7335548 这个提交记录上
 
 
 

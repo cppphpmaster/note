@@ -1,3 +1,25 @@
+bug: 
+    高并发: 玩飞镖/玩桌球 取出packedScore,得到score,存入新packedScore 这个过程要加锁!!!
+        todo, RedicLock枷锁成功后百分百锁3秒啊?? 这样可不行啊, 可以先改为1再想想
+
+    飞镖活动清空redis商会操作: 之前未从hDel改为zRem -> 已修复
+
+    目前servActivityRank->266行开始, 商会踢出玩家时, 需要从zset里面去除响应的score对应的packscore. ->已修复
+        取出工会packedScore, 得到score和time, 减去个人对工会的score, 重新packScore存入redis
+        有个疑问是: 重新packScore时 用time还是当前时间, 感觉还是time好吧
+
+    servActivityRank中use Main\server\dataActivityPray, 没有这个类啊
+
+    问清config是否也在develop分支开发
+
+优化:
+    飞镖和桌球同功能方法只保留一份, 如packScore, getScore, getTime设为公共方法
+====
+
+
+
+数据库积分同步到redis的脚本, 以备不时之需
+=========
 清空桌球活动:
 1. 清空mysql:
 delete from activity_darts_rank;
@@ -9,7 +31,11 @@ del roleDartsScore_xxxxxx
 del allianceDartsScore_xxxxxx
 
 
+
+billiards
 一. 接口
+1. 邮件发奖脚本 todo!
+
 3.进服
 
 28. 道具商城进入 缺少storage, 要补充接口文档
@@ -19,11 +45,13 @@ del allianceDartsScore_xxxxxx
 个人冲榜活动榜单 - 性质跟前十个人排行榜一样
 /activity/allianceRankList.api - 商会榜单
 /activity/allianceGetRankReward.api - 商会领奖
-邮件发奖脚本
+
 活动积分,道具未用完的保留到下次该活动, 不能超过库存上限 -> 判断是否已有判断
 
 配置:
  4个台球积分道具, 根据类型判断
+
+非标生成的配置文件->confDartStone.php(不确定)  confDartsReward.php
 
 配置文件解析:
 CustomerOrganicer.php
@@ -31,5 +59,26 @@ python 运行 解析, 解析后会同步到服务端对应目录, 保证bar_conf
 
 ====
 todo.
-1. tb加任务
-2. 给出文档先
+2. const CID_TYPE_BILLIARDS = 19;    // 桌球道具类型   该是多少
+3. const CID_BILLIARDS_SCORE = 99953;  // 桌球积分   该是多少
+4. 配置文件: confDartsReward->confBilliardsReward, confDartStone->confBilliardsStone
+5. // 桌球活动,活动结束后,需要重置的桌球道具上限个数.  cid => num
+    public static $billiardsPropsMax = [
+        'cid' => [ // 分别该是多少
+            20334, 
+            20335
+        ],
+        'num' => 30
+    ];
+
+6. allianceRank.php-> 124  <a v-if="type == <?= $typeDartsRank ?>" href="#setReward" data-toggle="modal"
+                               class="btn btn-default operate-set" v-on:click="setReward.clickType = 2">
+
+88. servRoleApi 获取个人积分那里要优化, 因为知识获取自己积分, 却查询所有redis
+
+todo now: 后台添加活动成功, 但是奖励添加失败, 且再编辑时所选活动没有限制
+
+
+{"personal":[{"rewardKey":1,"props":[{"cid":20017,"num":2},{"cid":20017,"num":2},{"cid":20012,"num":2}],"rewardKeyLimit":10}],
+"alliance":[{"rewardKey":1,"presidentReward":[{"cid":20018,"num":1},{"cid":20018,"num":1}],"memberReward":[{"cid":20018,"num":1},{"cid":20018,"num":1}],
+"rewardKeyLimit":10}]}
