@@ -76,3 +76,37 @@ url:
 
 uid5,rid9;  uid7, rid10; uid9, rid11
 
+
+====
+Updating dd1b7d07..81dc1dc2
+Fast-forward
+ Common/database/bar_server.sql                |   2 +-
+ Common/database/goAhead/update-server.sql     |   2 +-
+ Common/database/releaseTest/update-base.sql   |   1 -
+ Common/database/releaseTest/update-server.sql |  11 --
+ Core/library/ChatSdk.php                      |   3 +-
+ Main/confData/zh_cn/confBilliardsStone.php    | 112 +++++++++++
+ Main/confData/zh_cn/confCarShow.php           |  56 ++++++
+ Main/confData/zh_cn/confChapter_0.php         |   1 -
+ Main/confData/zh_cn/confConfig.php            |  10 +
+ Main/confData/zh_cn/confDartsReward.php       | 135 +++++++++++++
+ Main/confData/zh_cn/confItem.php              |  40 ++++
+ Main/confData/zh_cn/confPvpMall.php           |  60 +++---
+ Main/confData/zh_cn/confPvpNew.php            |   4 +-
+ Main/confData/zh_cn/confPvpRobot.php          | 728 +++++++++++++++++++++++++++++++++++-----------------------------------
+ Main/confData/zh_cn/confSerText.php           |   1 +
+ Main/confData/zh_cn/confTaskType.php          |   2 +-
+ Main/control/api/alliance/ctrlDissolve.php    |   2 +-
+ Main/control/api/beauty/ctrlBuySuit.php       |   1 +
+ Main/control/api/child/ctrlTeach.php          |   2 +-
+ Main/control/api/darts/ctrlPlayDarts.php      |  39 +++-
+ Main/control/api/pve/ctrlEnter.php            |  10 +-
+ Main/control/api/pve/ctrlHeroRecover.php      |  23 +--
+ Main/control/api/pve/ctrlWaveBattle.php       |  45 +++--
+ Main/service/api/servPve.php                  |  42 ++++
+ Main/service/api/servRoleApi.php              |  16 +-
+ Main/service/servActivityRank.php             |  30 ++-
+ Main/service/servEnum.php                     |   5 +-
+ 27 files changed, 910 insertions(+), 473 deletions(-)
+ create mode 100755 Main/confData/zh_cn/confBilliardsStone.php
+ create mode 100755 Main/confData/zh_cn/confCarShow.php
