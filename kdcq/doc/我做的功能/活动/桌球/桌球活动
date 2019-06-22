@@ -1,6 +1,5 @@
 bug: 
     高并发: 玩飞镖/玩桌球 取出packedScore,得到score,存入新packedScore 这个过程要加锁!!!
-        todo, RedicLock枷锁成功后百分百锁3秒啊?? 这样可不行啊, 可以先改为1再想想
 
     飞镖活动清空redis商会操作: 之前未从hDel改为zRem -> 已修复
 
@@ -34,7 +33,7 @@ del allianceDartsScore_xxxxxx
 
 billiards
 一. 接口
-1. 邮件发奖脚本 todo!
+1. 邮件发奖脚本
 
 3.进服
 

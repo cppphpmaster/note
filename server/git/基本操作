@@ -34,8 +34,14 @@ git支持https和git两种传输协议, 大多数 Git 服务器都会选择使�
 	4. git status   git push origin master
 
 
+git reset [commitid]
+回退到指定的commit版本，指定commit版本之后的commit都将被重置
 
-merge失败回滚:
+git revert [commitid]
+撤销指定commit版本的操作，这个操作也会生成一个新commit，指定commit版本之前及之后的操作均不受影响
+
+
+merge失败回滚(最好使用git revert而不是git reset):
 1、命令
 ⑴ git reflog
 查看merge操作的上一个提交记录的版本号

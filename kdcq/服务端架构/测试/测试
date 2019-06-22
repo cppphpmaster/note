@@ -1,0 +1,78 @@
+测试修改的地方:
+    1. kdcq/bar_server/Main/service/servGlobal.php: echo json_encode($array, JSON_UNESCAPED_UNICODE); 下一行正式
+    2. kdcq/bar_server/Main/control/api/ctrl_.php: 测试用的构造方法
+    public function __construct($checkStatus = servEnum::CHECK_ROLE, $blVersionCheckApi = false)
+           {
+               parent::__construct();
+               $requestLog = servDbConfig::getConfig(servEnum::DB_CONFIG_TYPE_REQUEST_LOG);
+
+               $this->vars = $_GET;
+               if (!isset($_POST['data']) && isset($_GET['data'])) { // TODO 测试用
+                   $_POST['data'] = $_GET['data'];
+               }
+               if (isset($_POST['data'])) {
+                   $str = urldecode($_POST['data']);
+       //            $str = str_replace("\\\"", "'", $str);
+       //            $str = str_replace("\\", "", stripslashes($str));
+                   $array = json_decode($str, true);
+                   if (is_array($array)) {
+                       //对输入的内容进行转义
+       //                $array = Tool::slashes($array);
+                       $this->vars = array_merge($this->vars, $array);
+                   }
+               }
+
+               // 记录访问日志
+               $url = $_SERVER['REQUEST_URI'];
+               if (strpos($url, '?') !== false) {
+                   $url = parse_url($url)['path'];
+               }
+               \output::log('access_log_' . date('Ymd'), $url . '?uuid=' . ($this->vars['uuid'] ?? '') . '&uid=' . ($this->vars['uid'] ?? 0) . '&rid=' . ($this->vars['rid'] ?? 0));
+
+               if ($requestLog) {
+                   servGlobal::$requestLog = $requestLog;
+                   servGlobal::$vars = $this->vars;
+               }
+
+               $sid = $this->vars['uid'];
+               $server = servGlobal::getServerData($sid);
+               servGlobal::setServer($server);
+               servGlobal::$uid = $this->vars['uid'];
+               servGlobal::$rid = $this->vars['rid'];
+           }
+
+url:
+    http://localhost:8888/api/billiards/topTenRank?sid=40001&uid=5&rid=9
+
+桌球:
+    玩桌球 - http://localhost:8888/api/billiards/playBilliards?sid=40001&uid=5&rid=9&cid=20335&type=1&id=11
+            cid: 桌球道具id, type: 1个人, 2商会, id:活动id
+
+    前十排行榜刷新 - http://localhost:8888/api/billiards/topTenRank?sid=40001&uid=5&rid=9&type=1&id=11
+        type: 1个人, 2商会     id: 活动id
+
+    桌球道具商城进入 - http://localhost:8888/api/billiards/storeEnter?sid=40001&uid=5&rid=9&id=11
+        id: 活动id
+
+    购买桌球/积分兑换 - http://localhost:8888/api/billiards/storeBuy?sid=40001&uid=5&rid=9&id=&activityId=11
+        id: 购买/兑换的商品id  activityId: 活动id
+
+    桌球冲榜活动批命 - http://localhost:8888/api/billiards/billiardsMyRank?sid=40001&uid=5&rid=9&id=11
+        id: 活动id
+
+    个人冲榜活动榜单 - http://localhost:8888/api/billiards/billiardsRankList?sid=40001&uid=5&rid=9&id=11&num=100
+        id: 活动id, num: 榜单数量, 最大值100
+
+    个人冲榜活动排名奖励领取 - http://localhost:8888/api/billiards/billiardsGetRankReward?sid=40001&uid=5&rid=9&id=11&num=100
+        id: 活动id
+
+    商会冲榜活动榜单 -
+
+    商会冲榜活动排名奖励领取 -
+
+    进服返回活动数据 - http://localhost:8888/api/billiards/storeEnter?sid=40001&uid=5&userToken=&phoneModel=
+        billiardsRank 桌球冲榜活动字段
+
+
+uid5,rid9;  uid7, rid10; uid9, rid11
+
