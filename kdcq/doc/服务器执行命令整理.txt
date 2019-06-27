@@ -1,0 +1,49 @@
+执行命令：
+登录到服务器后，进入代码根目录
+
+新开服务器或服务器重启时执行的命令(包含1-10的刷新)：
+cmd/run Admin /bin/refresh-start
+
+1、刷新pvp总属性缓存：cmd/run Admin /bin/refresh-pvp --sid=1 
+2、刷新白名单缓存：cmd/run Admin /bin/refresh-whiteList
+3、刷新服务器缓存列表：cmd/run Admin /bin/refresh-server
+4、刷新影响力榜：cmd/run Admin /bin/refresh-complex
+5、刷新亲密榜：cmd/run Admin /bin/refresh-closeExp
+6、刷新关卡榜：cmd/run Admin /bin/refresh-level
+7、刷新公告缓存：cmd/run Admin /bin/refresh-notice
+8、刷新聊天信用分敏感词：cmd/run Admin /bin/refresh-chatSensitiveWord
+9、刷新新获得称号玩家数据：cmd/run Admin /bin/refresh-titleHint
+10、刷新封禁设备缓存：cmd/run Admin /bin/refresh-deviceBan
+11、刷新富人区数据：cmd/run Admin /bin/refresh-rich
+12、刷新商城单品数据：cmd/run Admin /bin/refresh-mallItem
+
+
+4、开服命令：cmd/run Admin /bin/newServer --host=127.0.0.1 --port=3306 --sid=2 --redisKey=server --name=夜色迷人1服
+host：数据库连接IP
+port：数据库连接端口
+sid：服务器序号，生成的数据库名为bar_server_$sid
+redisKey：redis.ini配置的key
+服务器默认是测试服
+
+5、合服命令：cmd/run Admin /bin/merge --originalSid=2 --mergeToSid=1    
+originalSid：待合服的服务器ID
+mergeToSid：合服后保留的服务器ID
+以上示例为：将2服合到1服
+
+6、清档命令：cmd/run Admin /bin/clear-serverData --sid=
+sid：服务器序号
+
+7、导入后台菜单
+cmd/run Admin /bin/auth-load-admin
+
+8、商城物品购买数据，按日统计，含每日购买数量、购买次数及购买人数
+cmd/run Admin /bin/test-activityReward --sid=40001 --activityId=29
+
+9、活动（限时活动、每日充值、每天充值和累天充值）档次领取统计
+
+10、添加后台账号
+cmd/run Admin /bin/user-add --account='邮箱' --name='账号展示的名字' --password='密码'
+
+新开物理服务器注意事项：
+添加/etc/hosts: 218.6.70.174 gitlab.koudai.com
+开机自启：刷新缓存命令脚本

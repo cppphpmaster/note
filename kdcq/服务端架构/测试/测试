@@ -39,6 +39,13 @@
                servGlobal::setServer($server);
                servGlobal::$uid = $this->vars['uid'];
                servGlobal::$rid = $this->vars['rid'];
+               servGlobal::$testUser = servWhiteList::isWhiteUser();
+
+               $className = get_class($this);
+               $pos = strpos($className, 'api\\');
+               $api = substr($className, $pos + 4);
+               $wayType = str_replace(['\\', 'ctrl'], ['-', ''], $api);
+               servGlobal::$wayType = strtolower($wayType);
            }
 
 url:
@@ -57,7 +64,7 @@ url:
     购买桌球/积分兑换 - http://localhost:8888/api/billiards/storeBuy?sid=40001&uid=5&rid=9&id=&activityId=11
         id: 购买/兑换的商品id  activityId: 活动id
 
-    桌球冲榜活动批命 - http://localhost:8888/api/billiards/billiardsMyRank?sid=40001&uid=5&rid=9&id=11
+    桌球冲榜活动排名 - http://localhost:8888/api/billiards/billiardsMyRank?sid=40001&uid=5&rid=9&id=11
         id: 活动id
 
     个人冲榜活动榜单 - http://localhost:8888/api/billiards/billiardsRankList?sid=40001&uid=5&rid=9&id=11&num=100
@@ -70,43 +77,83 @@ url:
 
     商会冲榜活动排名奖励领取 -
 
-    进服返回活动数据 - http://localhost:8888/api/billiards/storeEnter?sid=40001&uid=5&userToken=&phoneModel=
+    进服返回活动数据 - http://localhost:8888/api/account/enterServer?sid=40001&uid=5&rid=9&uuid=&phoneModel=
         billiardsRank 桌球冲榜活动字段
 
 
 uid5,rid9;  uid7, rid10; uid9, rid11
+3号球: 20341, 6号球: 20342, 10号球: 20343, 12号球: 20344
+
+道具表 - role_prop_rid
+每日限购表 - role_daily_data
+上次活动备份表 - activity_data_bak
+邮件表 - role_mailbox
+执行 活动数据结算 脚本 - cmd/run Admin /bin/test-activityClose
+
+活动数据结算 -
+        /**
+         * 活动数据结算：每小时检测
+         * 1、跨天检测每日充值奖励并补发未领取奖励的玩家
+         * 2、设置前一小时结束的祈福活动的排行名次
+         * 3、设置前一小时结束的冲榜活动的排行名次及发奖励
+         * 4、非保留一天的活动直接结算并补发奖励
+         * 5、补发祈福活动未领取玩家的奖励(活动结束一天后)
+         * 6、备份冲榜活动数据(活动结束一天后)
+         */
+        public static function dailyClose()
+1. 活动过了展示时间后, 清空activity_billiards_rank, redis自动过期.
+2. 备份: activity_pray_bak
+3. 道具重置保留, 是根据当时servEnum中定义的最大数量去操作的
+   道具重置保留规则: 3号,6号球最多不超过30个, 用于兑换的积分作为道具直接保留, 按照servEnum中的$billiardsPropsMax.
 
 
+
+疑问:
+1. 道具没有用缓存吗
+2. 道具表role_prop_0 ~ role_prop_9, 其中11对应role_prop_1, 机制
+3. 为何不是活动的每个接口都检测活动, 而是只有进入接口监测
+
+
+bug:
+
+东京玫瑰 四大天王
+notice:
+1. zAdd第二个参数
+
+注意:
+1. 活动完全结束前不能开同type的新活动, 比如延迟一天的要等到延迟一天后, 因为redis键没有用活动id, 过期时间到之前开同type活动会继承之前的数据.
+2. 每天限购10次, 但是已拥有的超过10个后还能买
 ====
-Updating dd1b7d07..81dc1dc2
-Fast-forward
- Common/database/bar_server.sql                |   2 +-
- Common/database/goAhead/update-server.sql     |   2 +-
- Common/database/releaseTest/update-base.sql   |   1 -
- Common/database/releaseTest/update-server.sql |  11 --
- Core/library/ChatSdk.php                      |   3 +-
- Main/confData/zh_cn/confBilliardsStone.php    | 112 +++++++++++
- Main/confData/zh_cn/confCarShow.php           |  56 ++++++
- Main/confData/zh_cn/confChapter_0.php         |   1 -
- Main/confData/zh_cn/confConfig.php            |  10 +
- Main/confData/zh_cn/confDartsReward.php       | 135 +++++++++++++
- Main/confData/zh_cn/confItem.php              |  40 ++++
- Main/confData/zh_cn/confPvpMall.php           |  60 +++---
- Main/confData/zh_cn/confPvpNew.php            |   4 +-
- Main/confData/zh_cn/confPvpRobot.php          | 728 +++++++++++++++++++++++++++++++++++-----------------------------------
- Main/confData/zh_cn/confSerText.php           |   1 +
- Main/confData/zh_cn/confTaskType.php          |   2 +-
- Main/control/api/alliance/ctrlDissolve.php    |   2 +-
- Main/control/api/beauty/ctrlBuySuit.php       |   1 +
- Main/control/api/child/ctrlTeach.php          |   2 +-
- Main/control/api/darts/ctrlPlayDarts.php      |  39 +++-
- Main/control/api/pve/ctrlEnter.php            |  10 +-
- Main/control/api/pve/ctrlHeroRecover.php      |  23 +--
- Main/control/api/pve/ctrlWaveBattle.php       |  45 +++--
- Main/service/api/servPve.php                  |  42 ++++
- Main/service/api/servRoleApi.php              |  16 +-
- Main/service/servActivityRank.php             |  30 ++-
- Main/service/servEnum.php                     |   5 +-
- 27 files changed, 910 insertions(+), 473 deletions(-)
- create mode 100755 Main/confData/zh_cn/confBilliardsStone.php
- create mode 100755 Main/confData/zh_cn/confCarShow.php
+kdcq101deMacBook-Pro:bar_server kdcq101$ git merge hxl
+Auto-merging Main/service/servRoleData.php
+CONFLICT (content): Merge conflict in Main/service/servRoleData.php
+Auto-merging Main/service/servRedis.php
+Auto-merging Main/service/servEnum.php
+Auto-merging Main/service/servActivityRank.php
+CONFLICT (content): Merge conflict in Main/service/servActivityRank.php
+Auto-merging Main/service/api/servRoleApi.php
+Auto-merging Main/control/api/darts/ctrlPlayDarts.php
+CONFLICT (content): Merge conflict in Main/control/api/darts/ctrlPlayDarts.php
+Auto-merging Main/control/api/alliance/ctrlDissolve.php
+CONFLICT (content): Merge conflict in Main/control/api/alliance/ctrlDissolve.php
+Auto-merging Common/database/local/update-server.sql
+CONFLICT (content): Merge conflict in Common/database/local/update-server.sql
+Auto-merging Common/database/goAhead/update-server.sql
+Auto-merging Common/database/bar_server.sql
+Automatic merge failed; fix conflicts and then commit the result.
+
+
+CREATE TABLE `activity_billiards_rank` (
+  `autoId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL COMMENT '活动ID',
+  `rid` int(10) unsigned NOT NULL COMMENT '角色ID',
+  `score` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '活动积分',
+  `tms` int(10) unsigned NOT NULL COMMENT '最后时间',
+  `rank` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '排名：活动结束后设置',
+  `getFlag` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '领取标志：0=未领取；1=已领取',
+  PRIMARY KEY (`autoId`),
+  UNIQUE KEY `aid-rid` (`id`,`rid`),
+  KEY `rank` (`id`,`score`,`tms`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='桌球个人冲榜活动表';
+
+ALTER TABLE `role_daily_data` ADD COLUMN `billiardsMall` varchar(255) NOT NULL DEFAULT '' COMMENT '桌球活动商城购买数据' AFTER `dartsMall`;
