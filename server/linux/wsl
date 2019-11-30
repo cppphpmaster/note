@@ -1,0 +1,25 @@
+ssh登陆Win10 Linux子系统
+
+cd /etc/ssh
+
+#备份
+sudo cp sshd_config sshd_config.bak
+sudo vim sshd_config
+
+修改sshd_config
+
+Port 2233  #修改端口
+ListenAddress 0.0.0.0  #打开本地监听
+PasswordAuthentication yes  #允许密码登陆
+
+重启ssh 
+sudo service ssh restart
+
+重新生成host key 
+sudo dpkg-reconfigure openssh-server
+
+完成
+
+问题：关了bash会断线
+
+https://github.com/Microsoft/WSL/issues/612
