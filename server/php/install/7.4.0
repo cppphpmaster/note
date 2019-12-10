@@ -1,4 +1,4 @@
-一. 安装php7.3.6
+一. 安装php7.4.0 (在7.3.6的基础上还需要sqlite3和oniguruma)
 
 1.安装编译环境  
 sudo apt-get install \
@@ -8,6 +8,7 @@ gcc \
 g++ \
 vim \
 autoconf \
+sqlite3\
 libiconv-hook-dev \
 libmcrypt-dev \
 libxml2-dev \
@@ -16,12 +17,15 @@ libcurl4-openssl-dev \
 libjpeg8-dev \
 libfreetype6-dev \
 libzip-dev \
+libsqlite3-dev\
+
+安装oniguruma:  https://github.com/kkos/oniguruma/releases
 
 
 2.安装php
 cd php-xxx/
-./configure --prefix=/usr/local/php/7.3.6 \
---with-config-file-path=/etc/php/7.3.6 \
+./configure --prefix=/usr/local/php/7.4.0\
+--with-config-file-path=/etc/php/7.4.0\
 --enable-fpm \
 --enable-pcntl \
 --enable-mysqlnd \
@@ -48,11 +52,11 @@ cd php-xxx/
 
 sudo make
 sudo make install
-sudo mkdir -p /etc/php/7.3.6
-sudo cp php.ini-development /etc/php/7.3.6/php.ini
+sudo mkdir -p /etc/php/7.4.0
+sudo cp php.ini-development /etc/php/7.4.0/php.ini
 将PHP的可执行目录添加到环境变量中。打开~/.bashrc，在末尾添加如下内容：
-export PATH=/usr/local/php/7.3.6/bin:$PATH
-export PATH=/usr/local/php/7.3.6/sbin:$PATH
+export PATH=/usr/local/php/7.4.0/bin:$PATH
+export PATH=/usr/local/php/7.4.0/sbin:$PATH
 保存后执行：source ~/.bashrc
 通过php -v查看php版本，完成。
 
@@ -79,9 +83,9 @@ apt install composer
 4. 安装openssl扩展
 
 要用:
-./configure --with-php-config=/usr/local/php/7.3.6/bin/php-config --with-openssl=/usr
+./configure --with-php-config=/usr/local/php/7.4.0/bin/php-config --with-openssl=/usr
 不能用:
-./configure --with-php-config=/usr/local/php/7.3.6/bin/php-config --with-openssl=/home/hxl/ 下载/openssl-1.0.2g
+./configure --with-php-config=/usr/local/php/7.4.0/bin/php-config --with-openssl=/home/hxl/ 下载/openssl-1.0.2g
 因为会报这个错: configure: error: Cannot find OpenSSL's <evp.h>
 
 
@@ -138,7 +142,7 @@ extension=swoole.so
 	下载：git clone https://github.com/phpredis/phpredis
 	cd phpredis #进入安装目录
 	phpize #用phpize生成configure配置文件
-	./configure --with-php-config=/usr/local/php/7.3.6/bin/php-config  #配置
+	./configure --with-php-config=/usr/local/php/7.4.0/bin/php-config  #配置
 	sudo make  #编译
 	sudo make install  #安装
 
