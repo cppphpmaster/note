@@ -1,4 +1,3 @@
-处理软件包 linux-image-4.15.0-36-generic (--configure)时出错:
 解决办法如下：
 1.将info文件夹更名
 sudo mv /var/lib/dpkg/info /var/lib/dpkg/info_old
@@ -19,8 +18,3 @@ sudo rm -rf /var/lib/dpkg/info
 6.把以前的info文件夹重新改回名字
 sudo mv /var/lib/dpkg/info_old /var/lib/dpkg/info
 问题解决。
-
-7. 分辨率异常
-sudo vim /etc/default/grub   将分辨率改为系统分辨率
-sudo updade-grub
-================================

@@ -1,0 +1,2 @@
+sudo vim /etc/default/grub   将分辨率改为系统分辨率
+sudo updade-grub
