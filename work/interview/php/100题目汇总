@@ -1,0 +1,1808 @@
+PHP面试100题汇总
+1，Http 和Https的区别
+
+第一：http是超文本传输协议，信息是明文传输，https是具有安全性的ssl加密传输协议
+
+第二：http和https使用的是完全不同的连接方式，端口也不一样，前者80 或者443
+
+第三：http连接很简单，是无状态的。https协议是由ssl+http协议构建的可进行加密传输，身份认证的网络协议。
+
+2.什么方法来加快页面的加载速度
+
+1，用到服务器资源时在打开，不用时，立即关闭服务器资源。
+
+2，数据库添加索引
+
+3，页面可生成静态
+
+4，图片等大文件单独放在一个服务器
+
+5，能不查询数据库的尽量不去数据取数据，可以放在缓存中。
+
+3.表单中 get与post提交方法的区别?
+
+答:get是发送请求HTTP协议通过url参数传递进行接收,而post是实体数据,可以通过表单提交大量信息.
+4.echo ,print,print_r 的区别：
+
+echo 是php语句，无返回值。
+
+print,print_r是函数,有返回值。
+print（）    只能打印出简单类型变量的值(如int,string)
+
+print_r（） 可以打印出复杂类型变量的值(如数组,对象)
+echo     输出一个或者多个字符串
+
+5.session与cookie区别
+
+session与cookie相同：跨页面、不跨用户
+
+session与cookie不相同：
+
+1、session可以存储任意类型的数据，但cookie只能存储字符串
+
+2、cookie产生在服务器端、存储在客户端
+
+session产生在服务器端、存储在服务器端
+
+6.魔术常量
+
+答案：
+
+__LINE__文件中的当前行号。
+
+__FILE__文件的完整路径和文件名。
+
+__FUNCTION__函数名称
+
+__CLASS__类的名称
+
+__METHOD__类的方法名
+
+
+
+7.数据库中的事务是什么?
+答:事务（transaction）是作为一个单元的一组有序的数据库操作。如果组中的所有操作都成功，则认为事务成功，即使只有一个操作失败，事务也不成功。如果所有操作完成，事务则提交，其修改将作用于所有其他数据库进程。如果一个操作失败，则事务将回滚，该事务所有操作的影响都将取消。
+
+8.1优化MYSQL数据库的方法。
+1、选择合适的字段的数据类型
+
+1)能用数字不用字符串
+
+2)char、varchar、text  能用varchar不用char
+
+3）给字段加not null 避免在表中出现NULL关键字(default 值)
+
+2、选择合适的字段充当主键
+
+1)建议每张表必须有主键
+
+2)用数字类型的字段充当主键
+
+    拆分表
+    拆分字段，将文章的标题与内容分开
+
+2）拆分记录，将今年的记录与往年的记录分开
+
+    给字段合理添加索引
+
+a.格式:
+
+(普通索引)->
+
+创建:CREATE INDEX <索引名> ON tablename (索引字段)
+
+修改:ALTER TABLE tablename ADD INDEX [索引名] (索引字段)
+
+创表指定索引:CREATE TABLE tablename([...],INDEX[索引名](索引字段))
+
+(唯一索引)->
+
+创建:CREATE UNIQUE <索引名> ON tablename (索引字段)
+
+修改:ALTER TABLE tablename ADD UNIQUE [索引名] (索引字段)
+
+创表指定索引:CREATE TABLE tablename([...],UNIQUE[索引名](索引字段))
+
+(主键)->
+
+它是唯一索引,一般在创建表是建立,格式为:
+
+CREATA TABLE tablename ([...],PRIMARY KEY[索引字段])
+
+5、事务处理:
+
+a.保证数据完整性,例如添加和修改同时,两者成立则都执行,一者失败都失败
+
+mysql_query("BEGIN");
+
+mysql_query("INSERT INTO customerinfo (name) VALUES ('$name1')";
+
+mysql_query("SELECT * FROM `orderinfo` where customerid=".$id");
+
+mysql_query("COMMIT");
+
+6、锁定表,优化事务处理:
+
+a.我们用一个 SELECT 语句取出初始数据，通过一些计算，用 UPDATE 语句将新值更新到表中。
+
+包含有 WRITE 关键字的 LOCK TABLE 语句可以保证在 UNLOCK TABLES 命令被执行之前，
+
+不会有其它的访问来对 inventory 进行插入、更新或者删除的操作
+
+mysql_query("LOCK TABLE customerinfo READ, orderinfo WRITE");
+
+mysql_query("SELECT customerid FROM `customerinfo` where id=".$id);
+
+mysql_query("UPDATE `orderinfo` SET ordertitle='$title' where
+
+customerid=".$id);
+
+mysql_query("UNLOCK TABLES");
+
+7、使用外键,优化锁定表
+
+a.把customerinfo里的customerid映射到orderinfo里的customerid,
+
+任何一条没有合法的customerid的记录不会写到orderinfo里
+
+CREATE TABLE customerinfo(
+
+customerid INT NOT NULL,
+
+PRIMARY KEY(customerid)
+
+)TYPE = INNODB;
+
+CREATE TABLE orderinfo(
+
+orderid INT NOT NULL,
+
+customerid INT NOT NULL,
+
+PRIMARY KEY(customerid,orderid),
+
+FOREIGN KEY (customerid) REFERENCES customerinfo
+
+(customerid) ON DELETE CASCADE
+
+)TYPE = INNODB;
+
+注意:'ON DELETE CASCADE',该参数保证当customerinfo表中的一条记录删除的话同时也会删除order
+
+表中的该用户的所有记录,注意使用外键要定义事务安全类型为INNODB;
+
+8、优化查询语句
+
+a用内连接代替子查询代替子查询，用sphinx代替like模糊查询
+
+
+
+b最好在相同字段进行比较操作,在建立好的索引字段上尽量减少函数操作
+
+例子1:
+
+SELECT * FROM order WHERE YEAR(orderDate)<2008;(慢)
+
+SELECT * FROM order WHERE orderDate<"2008-01-01";(快)
+
+例子2:
+
+SELECT * FROM order WHERE addtime/7<24;(慢)
+
+SELECT * FROM order WHERE addtime<24*7;(快)
+
+例子3:
+
+SELECT * FROM order WHERE title like "%good%";
+
+SELECT * FROM order WHERE title>="good" and name<"good";
+
+    缓存，静态化
+    选择合适存储引擎用Innodb增删改，用myisam查询
+    主从数据库
+    负载均衡
+    最好拿数字类型的字段充当where条件
+    最好拿相同类型的字段进行比对(避免发生数据类型的转换)
+    不要在具有索引的字段上添加数据库函数(索引失效)
+
+8.2请简述项目中优化sql语句执行效率的方法,从哪些方面,sql语句性能如何分析?
+
+答：（1）选择最有效率的表名顺序
+
+（2）WHERE子句中的连接顺序
+
+（3）SELECT子句中避免使用‘*’
+
+（4）用Where子句替换HAVING子句
+
+（5）通过内部函数提高SQL效率
+
+（6）避免在索引列上使用计算。
+
+（7）提高GROUP BY 语句的效率, 可以通过将不需要的记录在GROUP BY 之前过滤掉。
+9.对于大流量网站，采用什么方法解决访问量问题？
+
+1，确认服务器的硬件是否足够支持当前的流量
+
+2，优化数据库的访问
+
+3，禁止外部的盗链
+
+4，控制大文件的下载
+
+5，使用不同主机分流主要流量
+
+6，使用流量分析统计软件
+
+10.一个函数，能够遍历一个文件夹下的所有文件和子文件夹（20分）
+
+function dir_recurse($dir) {
+
+$i = 1;
+
+if($handle = opendir($dir)) {
+
+while(false !== ($file = readdir($handle))) {
+
+if($file != "."&& $file != ".." ) {
+
+if(is_dir($dir."/".$file) == true) {
+
+$fullpath = $dir."/".$file;
+
+dir_recurse($fullpath);
+
+echo "$fullpath\n";
+
+$i++;
+
+}else {
+
+$fullpath = $dir."/".$file;
+
+echo "$fullpath\n";
+
+
+
+$i++;
+
+}
+
+}
+
+}
+
+closedir($handle);
+
+}
+
+}
+
+10.2写一个函数，能够遍历一个文件夹下的所有文件和子文件夹。
+
+function my_scandir($dir){
+
+$files = array();
+
+if ( $handle = opendir($dir) ) {
+
+while ( ($file = readdir($handle)) !== false ) {
+
+if ( $file != ".."&& $file != "." ) {
+
+if ( is_dir($dir . "/" . $file) ) {
+
+$files[$file] = scandir($dir . "/" . $file);
+
+}else {
+
+$files[] = $file;
+
+}
+
+}
+
+}
+
+closedir($handle);
+
+return $files;
+
+}
+
+}
+
+
+11、能够使HTML和PHP分离开使用的模板(1分)
+答:Smarty,Dwoo,TinyButStrong,Template Lite,Savant,phemplate,XTemplate
+12、使用哪些工具进行版本控制?(1分)
+答:cvs,svn,vss;
+
+13、如何实现字符串翻转?(3分)
+
+英文:
+
+strrev($a)
+
+中文或其他文字：
+
+中文：GB2312， 代码是使用GB2312编码
+
+<?php
+
+function reverse($str)
+
+{
+
+$ret = "";
+
+len=mb s trwidth( len=mbstrwidth(len = mb_strwidth(str,"GB2312");
+
+for(i=0; i=0;i=0; i< len; len;len; i++)
+
+{
+
+arr[]=mb s ubstr( arr[]=mbsubstr(arr[] = mb_substr(str, $i, 1, "GB2312");
+
+}
+
+return implode("", array_reverse($arr));
+
+}
+
+print_r(reverse("你好"));
+
+
+
+14.PHP的意思(送1分)
+
+PHP是一个基于服务端来创建动态网站的脚本语言，您可以用PHP和HTML生成网站主页
+
+15.MYSQL取得当前时间的函数是?，格式化日期的函数是(2分)
+
+答:now(),date()
+
+16.用PHP写出显示客户端IP与服务器IP的代码1分)
+
+答:打印客户端IP:echo $_SERVER[‘REMOTE_ADDR’]; 或者: getenv('REMOTE_ADDR');
+
+打印服务器IP:echo gethostbyname("www.bolaiwu.com")
+
+17、语句include和require的区别是什么?为避免多次包含同一文件，可用(?)语句代替它们?
+
+答:require->require是无条件包含也就是如果一个流程里加入require,无论条件成立与否         都会先执行require
+
+include->include有返回值，而require没有(可能因为如此require的速度比include快)
+
+注意:包含文件不存在或者语法错误的时候require是致命的,include不是
+18.http请求返回状态码
+
+400 请求无效
+
+401 未授权
+
+403 请求被禁止
+
+404 请求资源不存在
+
+405 请求资源被禁止
+
+406 无法接受
+
+407 要求代理身份验证
+
+500 Internal Server Error 服务端源代码错误
+
+600 源站没有返回响应头部，只返回实现内容
+
+19，linux授权码：
+
+600 属主有读写权限
+
+644 属主有读写权限，属性组有读权限
+
+700 属主有读写执行权限
+
+755 属主有读写执行权限，属性组有读，执行权限
+
+711 属主有读写执行权限，属性组有执行权限
+
+666 所有用户都有文件的读写权限
+
+777 所有用户都有文件的读写执行权限
+
+20.有一个网页地址, 比如PHP开发资源网主页: http://www.phpres.com/index.html,如何得到它的内容?($1分)
+
+答:方法1(对于PHP5及更高版本):
+
+$readcontents = fopen("http://www.phpres.com/index.html", "rb");
+
+$contents = stream_get_contents($readcontents);
+
+fclose($readcontents);
+
+echo $contents;
+
+方法2:
+
+echo file_get_contents("http://www.phpres.com/index.html");
+
+21.在PHP中error_reporting这个函数有什么作用? (1分)
+
+答:设置错误级别与错误信息回报
+
+22.JS表单弹出对话框函数是?获得输入焦点函数是? (2分)
+
+答:弹出对话框: alert(),prompt(),confirm()
+
+获得输入焦点 focus()
+
+23.foo()和@foo()之间有什么区别?(1分)
+
+答:@foo()控制错误输出
+
+24、mysql_fetch_row() 和mysql_fetch_array之间有什么区别? (1分)
+
+答:mysql_fetch_row是从结果集取出1行数组,作为枚举
+
+mysql_fetch_array是从结果集取出一行数组作为关联数组,或数字数组,两者兼得
+
+25、GD库是做什么用的? (1分)
+
+答:gd库提供了一系列用来处理图片的API，使用GD库可以处理图片，或者生成图片。
+
+在网站上GD库通常用来生成缩略图或者用来对图片加水印或者对网站数据生成报表。
+26.面向对象编程
+
+有两个重要的概念：类和对象
+
+类是具备某项功能的抽象模型，实际应用中，还需要对类进行实例化后使用。这样就引入了对象的概念。
+
+对象是类进行实例化后的一个产物，是一个实体。
+
+封装 ：把客观的事物封装成一个抽象的类。
+
+继承：子类继承父类，可以使用父类的属性和方法。可以实现接口，同时实现接口中的所有方法
+
+多态：覆盖和重载 子类可以覆盖父类中的方法；一个类中可以同时拥有同一个函数名的方法，但是方法的参数不同，实现的结果也不同。
+27.php框架
+
+熟悉YII ，Thinkphp还有laravel ,symfony2,cakephp
+28.mysql存储引擎
+
+ISAM：  查询速度快、增删改慢，支持全文索引、不支持外键、不支持事务
+
+MyISAM：    ISAM升级版
+
+Memory：    数据驻留在内存、速度快、数据管理不稳定、断电后数据全部丢失
+
+InnoDB：    速度较慢、支持外键、支持事务、不支持全文索引
+
+使用的存储引擎
+
+MyISAM：内容管理系统(新闻、官网、电商、软件下载、房屋、招聘...)  可读不可改  大部分是浏览信息
+
+InnoDB：技术型网站(bbs、blog、webo、oa...)
+
+
+29.数据库操作流程
+
+$link = mysql_connect("localhost","root","root");
+
+mysql_select_db("test",$link);
+
+$sql ="select * from table";
+
+$result = mysql_query($sql);
+
+while($row =mysql_fetch_****($result) ){
+
+$arr[]=$row;
+
+}
+
+$row = mysql_fetch_array($result)  意思：$row['name'] 和$row[1] 都可以取到值
+
+$row = mysql_fetch_row($result)) 意思：$row[1] 只有用索引取值，偏移量从0开始。
+
+$row = mysql_fetch_assoc($result)) 意思： $row['name'] 字段名作为索引取值 抽取一条记录转为 关联数组，失败返回false
+30.php 加密函数
+
+crypt($str[,$slat]) 可以完成单向加密功能
+
+md5()
+
+sha1() 返回一个40位的十六进制数，
+
+加密扩展库
+
+Mcrypt() 和Mash
+
+31、字符串“to upper case” 分别用php，shell ，js实现将字符串中的字符全部转换成大写并输出。（5分）
+
+Php实现： echo strtoupper(‘to upper case’)
+
+Shell实现：echo "to upper case" | tr 'a-z' 'A-Z'
+
+Js实现：
+
+<script language="javascript">
+var stmp1 = " to upper case ";
+alert(stmp1.toLocaleUpperCase());//转换成大写
+alert(stmp1.toUpperCase())//转换成大写
+</script>
+
+32.防止SQL注入
+
+1）一般使用 addslashes 函数
+
+addslashes 函数在制定的预定义字符前添加反斜杠
+
+    对字段和密码MD5加密处理
+    预处理过滤处理
+
+33、用PHP打印出前一天的时间,格式是2006-5-10 22:21:21
+
+<?php
+
+//echo date('Y-m-d H:i:s',time()-60*60*24
+
+echo date("Y:m:d H:i:s",strtotime("-1 day"));
+
+?>
+
+34.如何实现字符串翻转？
+
+其实PHP本身就有字符串翻转的函数:strrev(),不妨试试echo strrev($str);不过
+
+所有的这三种方法都不能解决中文字符串翻转的问题，会出错的。
+
+代码
+
+<?php
+
+function reverse($var)
+
+{
+
+$res="";
+
+for($i=0,$j=strlen($var);$i<$j;$i++)
+
+{
+
+$res=$var[$i].$res;
+
+}
+
+return $res;
+
+}
+
+$tmpvar="wofang";
+
+$res=reverse($tmpvar);
+
+echo $res;
+
+?>
+
+35.实现中文字串截取无乱码的方法。
+
+mb_substr()
+
+36.以下哪一句不会把 John 新增到 users 阵列？
+
+$users[] = 'john';
+
+成功把 John 新增到阵列 users。
+
+array_add($users,’john’);
+
+函式 array_add() 无定义。
+
+array_push($users,‘john’);
+
+成功把 John 新增到阵列 users。
+
+$users ||= 'john';
+
+语法错误。
+
+37.sort()、assort()、和 ksort() 有什么分别？它们分别在什么情况下使用？
+
+sort()
+
+根据阵列中元素的值，以英文字母顺序排序，索引键会由 0 到 n-1 重新编号。主
+
+要是当阵列索引键的值无关疼痒时用来把  阵列排序。
+
+assort()
+
+PHP 没有 assort() 函式，所以可能是 asort() 的笔误。
+
+asort()
+
+与 sort() 一样把阵列的元素按英文字母顺序来排列，不同的是所有索引键都获得保留，特别适合替联想阵列排序。
+
+ksort()
+
+根据阵列中索引键的值，以英文字母顺序排序，特别适合用于希望把索引键排序的联想阵列。
+
+38.以下的代码会产生什么？为什么？
+
+$num =10;
+
+function multiply(){
+
+$num =$num *10;
+
+}
+
+multiply();
+
+echo $num;
+
+由于函式 multiply() 没有指定 $num 为全域变量（例如 global $num 或者
+
+$_GLOBALS['num']），所以 $num 的值是 10。
+
+39.些函式可以用来在现正执行的脚本中插入函式库？
+
+对这道题目不同的理解会有不同的答案，我的第一个想法是插入 PHP 函式库不外乎
+
+include()、include_once()、require  ()、require_once()，但细心再想，“函式库”也应该包括 com 物件和 .net 函式库，所以我们的答案也要分别包括
+
+com_load 和 dotnet_load，下次有人提起“函式库”的时候，别忘记这两个函式。
+
+40.foo() 与 @foo() 有什么分别？
+
+foo() 会执行这个函式，任何解译错误、语法错误、执行错误都会在页面上显示出来。
+
+@foo() 在执行这个函式时，会隐藏所有上述的错误讯息。
+
+很多应用程式都使用 @mysql_connect() 和 @mysql_query 来隐藏 mysql 的错误讯息，我认为这是很严重的失误，因为错误  不该被隐藏，你必须妥善处理它们，可能的话解决它们。
+
+    “===”是什么？试举一个“==”是真但“===”是假的例子。
+
+“===”是给既可以送回布尔值“假”，也可以送回一个不是布尔值但却可以赋与“假”值的函式，strpos() 和 strrpos()   便是其中两个例子。
+
+问题的第二部份有点困难，想一个“==”是假，但是“===”是真的例子却很容易，
+
+
+
+相反的例子却很少。但我终于找到以下的  例子：
+
+if (strpos("abc", "a") == true){    // 这部分永不会被执行，因为 "a" 的位
+
+置是 0，换算成布尔值“假”}if   (strpos("abc", "a") === true){    // 这部份
+
+会被执行，因为“===”保证函式 strpos() 的送回值不会换算成布尔值.}
+
+42、如何修改SESSION的生存时间(1分).
+
+答:方法1:将php.ini中的session.gc_maxlifetime设置为9999重启apache
+
+方法2:$savePath = "./session_save_dir/";
+
+$lifeTime = 小时 * 秒;
+
+session_save_path($savePath);
+
+session_set_cookie_params($lifeTime);
+
+session_start();
+
+方法3:setcookie() and session_set_cookie_params($lifeTime);
+
+43、在PHP中，heredoc是一种特殊的字符串，它的结束标志必须?(1分)
+
+答:heredoc的语法是用"<<<"加上自己定义成对的标签，在标签范围內的文字视为一
+
+个字符串
+
+例子:
+
+$str = <<<SHOW
+
+my name is Jiang Qihui!
+
+SHOW;
+
+    在PHP中error_reporting这个函数有什么作用? (1分)
+
+答:设置错误级别与错误信息回报
+
+    请写一个函数验证电子邮件的格式是否正确 (2分)
+
+答:function checkEmail($email)
+
+{
+
+$pregEmail = "/([a-z0-9]*[-_\.]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-
+
+
+
+9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?/i";
+
+return preg_match($pregEmail,$email);
+
+}
+
+46、请写出数据类型(int char varchar datetime text)的意思; 请问varchar和char
+
+有什么区别(2分)
+
+答:int是数字类型,char固定长度字符串,varchar实际长度字符串,datetime日期时
+
+间型,text文本字符串
+
+char的场地固定为创建表设置的长度,varchar为可变长度的字符
+
+47、检测一个变量是否有设置的函数是否?是否为空的函数是?(2分)
+
+答:isset($str),empty($str);
+
+48、取得查询结果集总数的函数是?(1分)
+
+答:mysql_num_rows($result);
+
+49 简述如何得到当前执行脚本路径，包括所得到参数。
+
+<?php
+
+echo "http://".$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF']."?".$_SERVER
+
+['QUERY_STRING'];
+
+//echo "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+
+?>
+
+50 请举例说明在你的开发过程中用什么方法来加快页面的加载速度
+
+    要用到服务器资源时才打开
+    及时关闭服务器资源，
+    数据库添加索引，
+    页面可生成静态，图片等大文件单独服务器。
+    使用代码优化工具啦
+
+51． 给定一个用逗号分隔一组值的字符串，以下哪个函数能在仅调用一次的情况下就
+
+把每个独立的值放入一个新创建的数组？
+
+A．strstr()
+
+B．不可能只调用一次就完成
+
+C．extract()
+
+D．explode()√
+
+E．strtok()
+
+
+
+52．如果用+操作符把一个字符串和一个整型数字相加，结果将怎样？
+
+A．解释器输出一个类型错误
+
+B．字符串将被转换成数字，再与整型数字相加
+
+C．字符串将被丢弃，只保留整型数字√
+
+D．字符串和整型数字将连接成一个新字符串
+
+E．整形数字将被丢弃，而保留字符串
+
+53．以下脚本输出什么？
+
+$s = '12345';
+
+$s[$s[1]] = '2';
+
+echo $s;
+
+?>
+
+A．12345
+
+B．12245√
+
+C．22345
+
+D．11345
+
+54．以下脚本输出什么？
+
+$x = 'apple';
+
+echo substr_replace ($x, 'x', 1, 2);
+
+?>
+
+A．x
+
+B．axle√
+
+C．axxle
+
+D．applex
+
+E．xapple
+
+55． 函数______能读取文本文件中的一行。读取二进制文件或者其他文件时，应当
+
+用______函数。
+
+A．fgets(), fseek()
+
+B．fread(), fgets()
+
+C．fputs(), fgets()
+
+D．fgets(), fread()√
+
+E．fread(), fseek()
+
+
+
+56．哪个函数能够往文本文件中写入一个字符串？
+
+答案：fwrite()和fputs()两个函数在这里都可以，而后者其实是前者的别名。在
+
+PHP中，写入二进制数据和写入字符串没有区别。
+
+57．函数______能判断一个文件是否可写。
+
+答案：is_writeable
+
+58．以下哪个选项能将文件指针移到开头？
+
+A．reset()
+
+B．fseek(-1)
+
+C．fseek(0, SEEK_END)
+
+  D．fseek(0, SEEK_SET)√
+
+E．fseek(0, SEEK_CUR)
+
+59、include的功能和require一样，不同的是，require不能用在[   ]
+
+A、判断语句或循环里，
+
+B、连接语句里
+
+C、声明语句里
+
+D、文件的开头
+
+E、文件的中间√
+
+50、下面建立与MySQL Server的连接语法正确的是：[  ]
+
+A、$link=connect("host_name","user_name","password");
+
+B、$link=mysql_connect("host_name","user_name","password");√
+
+C、$link=mysqlconnect("host_name","user_name","password");
+
+D、$link=mysql_pconnect("host_name","user_name","password");√
+
+E、$link=pconnect("host_name","user_name","password");
+
+51.将字符串转换成小写
+
+strtolower(): 该函数将传入的字符串参数所有的字符都转换成小写,并以小定形式
+
+放回这个字符串
+
+52.将字符转成大写
+
+strtoupper(): 该函数的作用同strtolower函数相反,是将传入的字符参数的字符全
+
+部转换成大写,并以大写的形式返回这个字符串.用法同strtolowe()一 样.
+
+53.将字符串首字符转换成大写
+
+ucfirst(): 该函数的作用是将字符串的第一个字符改成大写,该函数返回首字符大
+
+写的字符串.用法同strtolowe()一样.
+
+54.将字符串每个单词的首字符转换成大写
+
+ucwords(): 该函数将传入的字符串的每个单词的首字符变成大写.如"hello
+
+world",经过该函数处理后,将返回"Hello Word".用法同strtolowe()一样.
+
+55、NoSQL：Not Only SQL
+
+思想：网站产生的数据，一部分存储数据库、一部分存到NoSQL相关产品
+
+NoSQL产品
+
+1、Memcache：内存(速度快、数据量小)、数据的过期时间
+
+2、MongoDB：文档数据库
+
+3、Redis：内存(速度快、数据量小)、库、没有过期时间
+
+    什么样的数据，存储在什么位置？
+
+MySQL：稳定的数据
+
+NoSQL：活跃的数据
+
+57缓存分类
+
+1、缓存数据存储位置不同
+
+1)文件缓存
+
+2)内存缓存
+
+2、缓存的数据量的不同
+
+1)页面缓存
+
+2)局部缓存
+
+3)局部不缓存
+
+4)数据缓存(变量缓存、动态缓存)
+
+Memcache：内存缓存、变量缓存
+
+58 .LINUX命令
+
+查看当前目录下所有内容        ls
+
+在当前目录下，新建一个文件夹  mkdir 文件夹名
+
+删除指定的文件夹              rmdir 文件夹名   只能删除空目录
+
+在当前目录下新建一个空白文件  touch 文件名
+
+删除当前目录下的一个文件      unlink文件名
+
+删除文件或文件夹              rm
+
+复制文件                      cp
+
+移动文件或文件夹              mv
+
+文件或文件夹重命名           mv
+
+查看完整的工作目录            pwd
+
+切换目录：                    cd     cd/ 返回根目录
+
+文件传输                      ftp
+
+查看文件内容                  cat 文件名
+
+查看文件编码                  file 文件名
+
+查找文件                      find 路径 -name 文件名
+
+修改文件或文件夹权限
+
+权限种类：r 4(读)、w 2(写)、x 1(执行)
+
+权限操作符：+(赋予权限)、-(收回权限)
+
+用户种类：a(所有人)、u(文件拥有者)、g(组用户)、o(其他用户)
+
+查看权限：ls -l
+
+-rw-r--r--  a.txt
+
+drwxr-xr-x  hello
+
+第1位：是文件还是文件夹(-文件、d文件夹)
+
+第234位：u用户的权限
+
+第567位：g用户的权限
+
+最后三位：o用户的权限
+
+1)将最大权限赋予a.txt
+
+chmod a+r+w+x a.txt
+
+chmod 777 a.txt
+
+2)设置a.txt权限，收回o用户的wx权限
+
+chmod o-w-x a.txt
+
+4)设置a.txt权限：u:rw  g:r  o:r
+
+chmod 644 a.txt
+
+5)设置hello文件夹权，给予最大权限(不影响子文件)
+
+chmod 777 hello
+
+6)设置hello文件夹权，给予最大权限(影响子文件)
+
+chmod -R 777 hello
+
+59、创建文件exer1，设置访问权限为rw-r--r--，现要增加所有用户的执行权限和同组用户的写权限,写出操作过程的命令（10分）
+
+touch exer1
+
+chmod 644  exer1
+
+增加权限
+
+chmod a+x  exer1
+
+chmod g+w  exer1
+
+或者
+
+chmod 775 exer1
+
+60易出现编码的地方
+
+    文件保存格式的编码
+    <meta http-equiv=”content-type” content=”text/html;charset=utf-8”>
+    Header();
+    Msq本身的编码（修改ini）
+    Set names gbk;
+    Mysql_query(“set names utf8”);
+    Iconv()PHP的系统函数进行转码
+
+ 61.PHP工作原理
+
+    一个网站运行时客户端有无数个，服务器通常只有一个（负载均衡）
+    开发环境的安装2，PHP5.4，MYSQL5.3-------开源，可以跨平台
+    配置文件：conf(Apache), php.ini my.ini
+    PHP文档组成：HTML，css，js，jquery，PHP
+    PHP语法风格：xml风格，短风格，ASP风格（已过时），脚本风格
+    <?php ?>注意：位置任意，同一页面可以出现多次，不能嵌套，里面只能出现php代码，需要转字符串输出
+    运行在服务器端
+    注释：单行注释，多行注释
+
+62数据类型：
+
+    标量类型：integer，Float，String，boolean
+    复合类型：Array，Object
+    特殊类型：Resource，Null
+    伪类型：mixed，number，callback（回调函数）
+
+63.PHP中被认为是false的值：
+
+0,     0.0，       null，       空数组，        空字符串，    false
+
+64.求两个日期的差数，例如2012-2-27 ~ 2013-05-6 的日期差数
+
+<?php
+
+function get_days($date1, $date2){
+
+$time1 = strtotime($date1);
+
+$time2 = strtotime($date2);
+
+return ($time2-$time1)/86400;
+
+}
+
+echo get_days("2013-05-6", "2012-2-27");
+
+?>
+
+65什么是MVC？
+
+回答：MVC由Model（模型）, View（视图）和Controller（控制器）组成，PHP MVC可以更高效地管理好3个不同层的PHP代码。
+
+Model：数据信息存取层。
+
+View：view层负责将应用的数据以特定的方式展现在界面上。
+
+Controller：通常控制器负责从视图读取数据，控制用户输入，并向模型发送数据。
+
+66.PHP中获取图像尺寸大小的方法是什么？
+
+回答：getimagesize () 获取图片的尺寸
+
+Imagesx () 获取图片的宽度
+
+Imagesy () 获取图片的高度
+
+67.如何在PHP中定义常量？
+
+回答：PHP中使用Define () 来定义常量。
+
+define (“Newconstant”, 30);
+68.如何不使用submit按钮来提交表单？
+
+如果我们不想用submit按钮来提交表单，我们也可以用超链接来提交，我们可以这样写代码：
+
+<a href=”javascript: document.myform.submit();”>Submit Me</a>
+69.简述论坛中无限分类的实现原理。
+
+答：无限极分类，那么应该是考察递归函数吧！
+
+第一步：建立测试数据库：
+
+CREATE TABLE `category` (  `id` smallint(5) unsigned NOT NULL auto_increment,  `fid` smallint(5) unsigned NOT NULL default '0',  `value` varchar(50) NOT NULL default '',  PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+
+第二步：插入测试数据：
+
+INSERT INTO `category` ( `fid`, `value`) VALUES  (0, 'PHP点点通博客PHPDDT.COM'), (1,'a'), (1,'b'), (2,'c'), (2,'d'), (4,'e')
+
+第三步：递归输出分类：
+
+70.试述isset()和empty()的区别
+
+isset() 测试变量是否存在 empty() 测试变量是否为空
+
+71.请用尽可能少的语句实现对输入Email地址进行验证的功能
+
+eregi('^[_a-z0-9]+(/.[_a-z0-9-]+)*@[a-z0-9]+(/.[a-z0-9-]+)*$',$emailaddress)
+72.使用PHP描述冒泡排序和快速排序算法，对象可以是一个数组
+
+/冒泡排序（数组排序）
+
+function bubble_sort($array)
+
+{
+
+$count = count($array);
+
+if ($count <= 0) return false;
+
+for($i=0; $i<$count; $i++){
+
+for($j=$count-1; $j>$i; $j–){
+
+if ($array[$j] < $array[$j-1]){
+
+$tmp = $array[$j];
+
+$array[$j] = $array[$j-1];
+
+$array[$j-1] = $tmp;
+
+}
+
+}
+
+}
+
+return $array;
+
+}
+
+//快速排序（数组排序）
+
+function quick_sort($array) {
+
+if (count($array) <= 1) return $array;
+
+$key = $array[0];
+
+$left_arr = array();
+
+$right_arr = array();
+
+for ($i=1; $i<count($array); $i++){
+
+if ($array[$i] <= $key)
+
+$left_arr[] = $array[$i];
+
+else
+
+$right_arr[] = $array[$i];
+
+}
+
+$left_arr = quick_sort($left_arr);
+
+$right_arr = quick_sort($right_arr);
+
+return array_merge($left_arr, array($key), $right_arr);
+
+}
+
+73、使用PHP描述顺序查找和二分查找（也叫做折半查找）算法，顺序查找必须考虑效率，对象可以是一个有序数组
+
+//二分查找（数组里查找某个元素）
+
+function bin_sch($array, $low, $high, $k){
+
+if ($low <= $high){
+
+$mid = intval(($low+$high)/2);
+
+if ($array[$mid] == $k){
+
+return $mid;
+
+}elseif ($k < $array[$mid]){
+
+return bin_sch($array, $low, $mid-1, $k);
+
+}else{
+
+return bin_sch($array, $mid+1, $high, $k);
+
+}
+
+}
+
+return -1;
+
+}
+
+//顺序查找（数组里查找某个元素）
+
+function seq_sch($array, $n, $k){
+
+$array[$n] = $k;
+
+for($i=0; $i<$n; $i++){
+
+if($array[$i]==$k){
+
+break;
+
+}
+
+}
+
+if ($i<$n){
+
+return $i;
+
+}else{
+
+return -1;
+
+}
+
+}
+
+74.写一个二维数组排序算法函数，能够具有通用性，可以调用php内置函数
+
+function array_sort($arr, $keys, $order=0) {
+
+if (!is_array($arr)) {
+
+return false;
+
+}
+
+$keysvalue = array();
+
+foreach($arr as $key => $val) {
+
+$keysvalue[$key] = $val[$keys];
+
+}
+
+if($order == 0){
+
+asort($keysvalue);
+
+}else {
+
+arsort($keysvalue);
+
+}
+
+reset($keysvalue);
+
+foreach($keysvalue as $key => $vals) {
+
+$keysort[$key] = $key;
+
+}
+
+$new_array = array();
+
+foreach($keysort as $key => $val) {
+
+$new_array[$key] = $arr[$val];
+
+}
+
+return $new_array;
+
+}
+
+75.utf-8转换成gbk的函数是？
+
+iconv("gbk",""UTF-8,"我们"); mb_convert_encoding($str, "GBK", "UTF-8")
+
+76.Php中分割字符串成数组的函数和连接数组成字符串的函分别有哪些？
+
+explode() split() ;implode() join()
+77.说几个你知道的设计模式？
+
+单例模式： 保证一个类仅有一个实例，并提供一个访问他的全局访问点例如框架中的数据库连接
+
+简单工厂模式： 它具有创建对象的某些方法，可以使用工厂类创建对象，而不直接使用 new。例如初始化数据库的时候会用到，比如MySQL，MSSQL
+
+策略模式： 针对一组算法，将每一个算法封装到具有共同接口的独立的类中，例如进入个人主页时，根据浏览者的不同，给予不同的显示与操作
+
+注册模式： 提供了在程序中有条理的存放并管理一组全局对象 (object)，例如ZF框架中的Zend_Registry::set
+
+适配器模式： 将不同接口适配成统一的API接口，例如数据操作有mysql、mysqli、pdo等，可利用适配器模式统一接口
+
+观察者模式： 一个对象通过添加一个方法使本身变得可观察。当可观察的对象更改时，它会将消息发送到已注册的观察者。例如实现实现消息推送
+
+装饰器模式： 不修改原类代码和继承的情况下动态扩展类的功能，例如框架的每个Controller文件会提供before和after方法
+
+迭代器模式： 提供一个方法顺序访问一个聚合对象中各个元素，在PHP中将继承 Iterator 类
+
+原型模式： 实现了一个原型接口，该接口用于创建当前对象的克隆。当直接创建对象的代价比较大时，则采用这种模式。例如，一个对象需要在一个高代价的数据库操作之后被创建。
+
+78.echo，print()，print_r()，printf()，sprintf()，var_dump()有什么区别?
+
+echo ：是语句不是函数，没有返回值，可输出多个变量值，不需要圆括号。不能输出数组和对象，只能打印简单类型(如int,string)
+
+print ：是语句不是函数，有返回值 1 ，只能输出一个变量，不需要圆括号。不能输出数组和对象，只能打印简单类型(如int,string)。
+
+print_r
+
+：是函数，可以打印复合类型，例如：stirng、int、float、array、object等，输出array时会用结构表示，而且可以通过print_r($str,true)来使print_r不输出而返回print_r处理后的值
+
+printf ：是函数，把文字格式化以后输出（参看C语言）
+
+sprintf ：是函数，跟printf相似，但不打印，而是返回格式化后的文字，其他的与printf一样。
+
+var_dump ：函数，输出变量的内容、类型或字符串的内容、类型、长度。常用来调试。
+
+79.echo count(“abc”); 输出什么?
+
+答案:1
+
+    写个函数用来对二维数组排序。
+
+答案：array_multisort() 。
+
+81.对于大流量的网站,您采用什么样的方法来解决访问量问题?
+
+首先，确认服务器硬件是否足够支持当前的流量。
+
+其次，优化数据库访问。
+
+第三，禁止外部的盗链。
+
+第四，控制大文件的下载。
+
+第五，使用不同主机分流主要流量
+
+第六，使用流量分析统计软件。
+
+82.error_reporting(2047)什么作用？
+
+答案：相当于 error_reporting(‘E_ALL’); 输出所有的错误。
+
+83、 简述如何得到当前执行脚本路径，包括所得到参数。
+
+访问http://temp.com/phpinfo.php?id=1
+
+echo $_SERVER['SCRIPT_URL']; //得到/phpinfo.php
+
+echo $_SERVER["SCRIPT_URI"]; //得到http://temp.com/phpinfo.php
+
+echo $_SERVER["SCRIPT_FILENAME"]; //得到F:/www/Temp/phpinfo.php
+
+echo $_SERVER["REQUEST_URI"]; //得到/phpinfo.php?id=1
+
+echo $_SERVER["SCRIPT_NAME"]; //得到/phpinfo.php
+
+参考server.php http://lesson.com/test/server.php?id=1
+
+    写出session的运行机制。
+
+session创建时，是否会在服务端记录一个cookie?cookie里面的内容是什么？
+
+session机制是一种服务器端的机制，服务器使用一种类似于散列表的结构（也可能就是使用散列表）来保存信息。
+
+当程序需要为某个客户端的请求创建一个session的时候，服务器首先检查这个客户端的请求里是否已包含了一个session标识-称为sessionid，如果已包含一个sessionid则说明以前已经为此客户端创建过session，服务器就按照sessionid把这个session检索出来使用（如果检索不到，可能会新建一个），如果客户端请求不包含sessionid，则为此客户端创建一个session并且生成一个与此session相关联的sessionid，sessionid的值应该是一个既不会重复，又不容易被找到规律以仿造的字符串，这个sessionid将被在本次响应中返回给客户端保存。_
+
+保存这个sessionid的方式可以采用cookie，这样在交互过程中浏览器可以自动的按照规则把这个标识发给服务器。一般这个cookie的名字都是类似于SEEESIONID。r
+
+由于cookie可以被人为的禁止，必须有其他机制以便在cookie被禁止时仍然能够把sessionid传递回服务器。经常被使用的一种技术叫做URL重写，就是把sessionid直接附加在URL路径的后面，附加方式也有两种，一种是作为URL路径的附加信息，表现形式为http://…../xxx;SEEESIONID=ByOK3vjFD75aPnrF7C2HmdnV6QZcEbzWoWiBYEnLerjQ99zWpBng!-145788764比
+
+另一种是作为查询字符串附加在URL后面，表现形式为http://…../xxx?SEEESIONID=ByOK3vjFD75aPnrF7C2HmdnV6QZcEbzWoWiBYEnLerjQ99zWpBng!-145788764参
+
+为了在整个交互过程中始终保持状态，就必须在每个客户端可能请求的路径后面都包含这个SEEESIONID。
+
+85.Cookie的原理及使用？
+
+Cookie是网站保存在浏览器客户端的信息，也就是说保存在访客的机器里的变量，一般随着HTTP头发送到服务器端。在Cookie生效之后及失效之前，客户每次发出页面请求的时候（包括PHP页面和静态html页面），都会把Cookie一块发送到服务器，只要我们针对它进行相应的处理，就可以实现变量”追随”。到
+
+86.Form中的get和post方法，在数据传输过程中分别对应了HTTP协议中的GET和POST方法。二者主要区别如下：
+
+a、Get是用来从服务器上获得数据，而Post是用来向服务器上传递数据。
+
+b、Get将表单中数据的按照variable=value的形式，添加到action所指向的URL后面，并且两者使用”?”连接，而各个变量之间使用”&”连接；Post是将表单中的数据放在form的数据体中，按照变量和值相对应的方式，传递到action所指向URL。u
+
+c、Get是不安全的，因为在传输过程，数据被放在请求的URL中，而如今现有的很多服务器、代理服务器或者用户代理都会将请求URL记录到日志文件中，然后放在某个地方，这样就可能会有一些隐私的信息被第三方看到。另外，用户也可以在浏览器上直接看到提交的数据，一些系统内部消息将会一同显示在用户面前。Post的所有操作对用户来说都是不可见的。而
+
+d、Get传输的数据量小，这主要是因为受URL长度限制；而Post可以传输大量的数据，所以在上传文件只能使用Post（当然还有一个原因，将在后面的提到）。
+
+e、Get限制Form表单的数据集的值必须为ASCII字符；而Post支持整个ISO10646字符集。
+
+f、Get是Form的默认方法。
+
+*.Post传输数据时，不需要在URL中显示出来，而Get方法要在URL中显示。
+
+*.Post传输的数据量大，可以达到2M，而Get方法由于受到URL长度的限制,只能传递大约1024字节.
+
+.Post顾名思义,就是为了将数据传送到服务器段,Get就是为了从服务器段取得数据.而Get之所以也能传送数据,只是用来设计告诉服务器,你到底需要什么样的数据.Post的信息作为http请求的内容，而Get是在Http头部传输的。提
+
+87.PHP5中魔术方法函数有哪几个，请举例说明各自的用法
+
+__sleep
+
+__wakeup
+
+__toString
+
+__set_state
+
+__construct,
+
+__destruct
+
+__call,
+
+__get,
+
+__set,
+
+__isset,
+
+__unset
+
+__clone
+
+__autoload
+
+    isset()和empty()的区别
+
+两者都是测试变量用的。但是isset()是 测试变量是否被赋值 ，而empty()是测试 一个已经被赋值的变量是否为空
+
+。如果一个变量没被赋值就引用在php里是被允许的,但会有notice提示。如果一个变量被赋空值，$foo=””或者$foo=0或者$foo=false,那么empty($foo)返回真，isset($foo)也返回真，就是说赋空值不会注销一个变量。要注销一个变量，可以用d
+
+unset($foo)或者$foo=NULL。
+
+89.以下哪一句不会把 John 新增到 users 阵列？
+
+$users[] = ‘john’;
+
+成功把 John 新增到阵列 users。
+
+array_add($users,’john’);
+
+函式 array_add() 无定义。
+
+array_push($users,‘john’);
+
+成功把 John 新增到阵列 users。
+
+$users ||= ‘john’;
+
+语法错误。
+
+90.以下哪一个函式可以把浏览器转向到另一个页面？
+
+redir()这不是一个 PHP 函式，会引致执行错误。
+
+header()这个是正确答案，header() 用来插入卷头资料，可以用来使浏览器转向到另一个页面，例如：
+
+header(“Location: http://www.phpmst.com/”);
+
+location()这不是一个 PHP 函式，会引致执行错误。
+
+redirect()这不是一个 PHP 函式，会引致执行错误。
+
+91.PHP中的非静态方法可以通过静态调用吗，反之呢？
+
+其实问题是问没有通过static定义的方法，能否通过”对象名::方法名“这样的形式来调用。答案是会产生一个strict错误，但在会继续执行代码。
+
+反之，能否通过“对象名->方法名“的形式来调用static定义的方法？答案是不能，会出错并中断程序执行。
+
+92.使用utf-8编码，以下代码输出结果是什么？strlen函数是计算字符串的字节数还是字符数？
+
+$str = “您好hello”;
+
+答案：echo strlen($str);
+
+11 strlen() 函数返回字符串的长度。
+
+93..什么是时间戳？时间戳能代表的最小年份和最大年份是多少？
+
+答案：（格林威治时间 1970 年 1 月 1 日 00:00:00）到当前时间的秒数。
+
+有效的时间戳典型范围是格林威治时间 1901 年 12 月 13 日 20:45:54 到 2038 年 1 月 19 日 03:14:07。（此范围符合
+
+32 位有符号整数的最小值和最大值）。
+
+不过在 PHP 5.1 之前此范围在某些系统（如 Windows）中限制为从 1970 年 1 月 1 日到 2038 年 1 月 19 日。
+
+    MyISAM与innoDB存储引擎有何差别？
+
+答案：A、两者在文件构成上有区别；
+
+B、InnoDB支持事务处理，MyISAM不支持；
+
+C、对无WHERE子句的COUNT(*)操作的不同：MyISAM中保存了该值，直接读取，InnoDB需要作全表扫描；
+
+D、锁的区别：InnoDB支持表级锁和行级锁，MyISAM只支持表级锁；
+
+E、索引会缓存数据，而MYISAM不会；
+
+F、INNODB不区分char和varchar；
+
+G、INNODB支持hash索引，而MYISAM不支持；
+
+H、InnoDB不支持FULLTEXT类型的索引；
+
+I、InnoDB 中不保存表的具体行数，也就是说，执行select count(*) from
+
+table时，InnoDB要扫描一遍整个表来计算有多少行，但是MyISAM只要简单的读出保存好的行数即可。注意的是，当count(*)语句包含
+
+where条件时，两种表的操作是一样的；
+
+J、对于AUTO_INCREMENT类型的字段，InnoDB中必须包含只有该字段的索引，但是在MyISAM表中，可以和其他字段一起建立联合索引；
+
+K、DELETE FROM table时，InnoDB不会重新建立表，而是一行一行的删除；
+
+L、LOAD TABLE FROM
+
+MASTER操作对InnoDB是不起作用的，解决方法是首先把InnoDB表改成MyISAM表，导入数据后再改成InnoDB表，但是对于使用的额外的InnoDB特性(例如外键)的表不适用。
+
+95..如何记录php程序错误至系统日志？
+
+答案：将PHP的log_errors开启即可，默认是记录到WEB服务器的日志文件里，比如Apache的error.log文件。
+
+当然也可以记录错误日志到指定的文件中。
+
+代码如下:
+
+# vim /etc/php.inidisplay_errors = Off
+
+log_errors = On
+
+error_log = /var/log/php-error.log
+
+另外也可以设定error_log = syslog，使这些错误信息记录到操作系统的日志里。
+
+display_errors = Off //不显示错误
+
+error_reporting 设定错误讯息回报的等级
+
+96.用最少的代码写一个求3值最大值的函数.
+
+答案： function($a,$b,$c){
+
+return $a>$b? ($a>$c? $a : $c) : ($b>$c? $b : $c );
+
+}
+
+97.在PHP中，heredoc是一种特殊的字符串，它的结束标志必须?(1分)
+
+答:heredoc的语法是用”<<<”加上自己定义成对的标签，在标签范围內的文字视为一个字符串
+
+例子:
+
+$str = <<<SHOW
+
+my name is Jiang Qihui!
+
+SHOW;
+
+
+98.字符串函数
+
+chr — 通过ASCII码值返回指定的字符
+
+ord — 通过指定的字符返回ASCII码值
+
+explode — 使用一个字符串分割另一个字符串
+
+implode — 将一个一维数组的值转化为字符串
+
+join — 别名implode
+
+htmlspecialchars — 把预定义的字符转换为HTML实体（比如说大于小于）
+
+nl2br — 在字符串所有新行之前插入HTML换行标记
+
+strip_tags — 从字符串中去除 HTML 和 PHP 标记
+
+lcfirst — 使一个字符串的第一个字符小写
+
+ucfirst — 将字符串的首字母转换为大写
+
+ucwords — 将字符串中每个单词的首字母转换为大写
+
+md5 — 加密，返回32位的字符串
+
+sha1 — 加密，返回40位的字符串
+
+number_format — 以千位分隔符方式格式化一个数字
+
+trim — 去除字符串首尾处的空白字符（或者其他字符）
+
+ltrim — 删除字符串开头的空白字符（或其他字符）
+
+rtrim — 删除字符串末端的空白字符（或者其他字符）
+
+chop — rtrim 的别名
+
+str_replace — 子字符串替换
+
+str_ireplace — str_replace的忽略大小写版本
+
+str_pad — 使用另一个字符串填充字符串为指定长度
+
+str_repeat — 重复一个字符串
+
+str_shuffle — 随机打乱一个字符串
+
+str_split — 将字符串转换为数组
+
+strstr — 查找字符串的首次出现
+
+strchr — 别名 strstr
+
+stristr — strstr 函数的忽略大小写版本
+
+strrchr — 查找指定字符在字符串中的最后一次出现
+
+strpos — 查找字符串首次出现的位置
+
+stripos — 查找字符串首次出现的位置（不区分大小写）
+
+strripos — 计算指定字符串在目标字符串中最后一次出现的位置（不区分大小写）
+
+strrpos — 计算指定字符串在目标字符串中最后一次出现的位置
+
+strlen — 获取字符串长度
+
+strrev — 反转字符串
+
+strtolower — 将字符串转化为小写
+
+strtoupper — 将字符串转化为大写
+
+substr — 截取字符串
+99.数组函数
+
+答案：
+
+array_shift — 将数组开头的单元移出数组
+
+array_pop — 将数组最后一个单元弹出（出栈）
+
+array_unshift — 在数组开头插入一个或多个单元
+
+array_push — 将一个或多个单元压入数组的末尾（入栈）
+
+array_keys — 返回数组中部分的或所有的键名
+
+array_values — 返回数组中所有的值
+
+in_array — 检查数组中是否存在某个值
+
+array_key_exists — 检查给定的键名或索引是否存在于数组中
+
+key_exists — 别名 array_key_exists
+
+array_rand — 从数组中随机取出一个或多个单元
+
+array_reverse — 返回一个单元顺序相反的数组
+
+array_unique — 移除数组中重复的值
+
+array_merge — 合并一个或多个数组
+
+count — 计算数组中的单元数目或对象中的属性个数
+
+sizeof — count 的别名
+
+array_sum — 计算数组中所有值的和
+
+array_flip — 交换数组中的键和值
+
+array_count_values — 统计数组中所有的值出现的次数
+
+shuffle — 将数组打乱
+
+reset — 将数组的内部指针指向第一个单元
+
+prev — 将数组的内部指针倒回一位
+
+current — 返回数组中的当前单元
+
+pos — current 的别名
+
+each — 返回数组中当前的键／值对并将数组指针向前移动一步
+
+next — 将数组中的内部指针向前移动一位
+
+end — 将数组的内部指针指向最后一个单元
+
+
+
+sort — 对数组排序
+
+rsort — 对数组逆向排序
+
+asort — 对数组进行排序并保持索引关系
+
+arsort — 对数组进行逆向排序并保持索引关系
+
+ksort — 对数组按照键名排序
+
+krsort — 对数组按照键名逆向排序
+
+compact — 建立一个数组，包括变量名和它们的值
+
+range — 快速创建数组
+
+    单例模式，创建mysqli数据库链接的单例对象
+
+class Db
+
+{
+
+private static $instance;
+
+public $handle;
+
+private function __construct($host, $username, $password, $dbname)
+
+{
+
+$this->handle = NULL;
+
+$this->getcon($host, $username, $password, $dbname);
+
+}
+
+public static function getBb()
+
+{
+
+self::$instance = new Db();
+
+
+
+return self::$instance;
+
+}
+
+private function getcon($host, $username, $password, $dbname)
+
+{
+
+if($this->handle!=NULL){
+
+return true;
+
+}
+
+$this->handle = mysqli_connect($host, $username, $password,
+
+$dbname);
+
+}
+
+}
