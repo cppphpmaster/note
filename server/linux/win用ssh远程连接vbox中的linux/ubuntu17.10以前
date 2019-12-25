@@ -1,0 +1,40 @@
+
+https://www.cnblogs.com/drfxiaoliuzi/p/4757734.html
+
+1.安装ssh客户端
+
+2.查看是否安装ssh服务
+在ubuntu终端命令界面键入：
+#ssh localhost
+
+如果出现下面提示则表示还没有安装：
+#ssh: connect to hostlocalhost port 22: Connection refused
+
+3.安装ssh服务
+如果通过上面步骤查看没有安装sshserver、则键入如下命令安装：
+#apt-get install openssh-server
+
+4.安装完成后启动ssh
+#service ssh start
+
+5.启动完成之后可以使用命令：ps –e | grep ssh 来查看ssh状态、
+#2342 ? 00:00:00 sshd
+则表明启动成功。
+
+6.关闭防火墙
+#ufw disable
+
+7.vbox选择NAT方式
+
+8.虚拟机ip选择dhcp动态分配：
+#vi /etc/network/interfaces
+在文件最后添加：
+      auto eth0
+      iface eth0 inet dhcp
+如此，虚拟机可与宿主机的共享网络
+
+9.在虚拟机上做端口映射
+      选择【网络】-->【连接方式】更改【网络地址转换(NAT)】，然后选择【高级】-->【端口转发】，将虚拟机的端口22映射为任一端口，如2222
+      其他的服务也可以做相同的设置，22是ssh的服务端口。
+
+10.用ssh客户端连接虚拟机，ip：127.0.0.1 ， 端口2222，成功连接。

@@ -1,0 +1,5 @@
+https://blog.csdn.net/lang523493505/article/details/80542434
+
+网络设置为桥接
+虚拟机安装open-sshserver
+ifconfig获取虚拟机ip, 然后正常ssh即可连接
