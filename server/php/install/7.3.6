@@ -15,7 +15,12 @@ libmysqlclient-dev \
 libcurl4-openssl-dev \
 libjpeg8-dev \
 libfreetype6-dev \
-libzip-dev
+libzip-dev \
+openssl \
+libssl-dev \
+curl \
+pkg-config \
+libsasl2-dev \
 
 
 2.安装php
@@ -45,6 +50,8 @@ cd php-xxx/
 --with-gd \
 --with-mhash \
 --with-xmlrpc \
+--with-openssl \
+--with-curl \
 
 sudo make
 sudo make install
