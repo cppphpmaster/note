@@ -1,0 +1,21 @@
+Ubuntu18.04 安装深度终端 Deepin Terminal 的方法
+安装
+
+终端依次执行：
+
+sudo add-apt-repository ppa:noobslab/deepin-sc
+
+回车继续
+
+sudo apt-get update
+
+sudo apt-get install -y deepin-terminal
+
+运行
+
+终端执行deepin-terminal或者从所有程序中找。
+其他
+
+官方帮助文档：深度终端 - deepin Wiki
+
+安装参考：How to Install Deepin Terminal in Ubuntu - Make Tech Easier
