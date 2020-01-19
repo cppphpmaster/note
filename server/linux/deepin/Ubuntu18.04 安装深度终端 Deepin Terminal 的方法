@@ -19,3 +19,9 @@ sudo apt-get install -y deepin-terminal
 官方帮助文档：深度终端 - deepin Wiki
 
 安装参考：How to Install Deepin Terminal in Ubuntu - Make Tech Easier
+
+
+default:
+gsettings set org.gnome.desktop.default-applications.terminal exec /usr/bin/deepin-terminal
+sudo update-alternatives --config x-terminal-emulator
+
