@@ -1,3 +1,7 @@
-chm - kchmviewer - apt安装
-远程连接 - remmina - 自带
-词典 - goldendict - apt安装
+chm - kchmviewer, apt安装
+
+远程连接 - remmina, 自带
+
+词典 - goldendict, apt安装, 配置:https://www.cnblogs.com/creasing/p/11333728.html
+        从http://download.huzheng.org/zh_CN/下载离线词典, 可以下载多个解压到一个目录,
+        推荐郎英和牛津,然后添加该目录即可.
