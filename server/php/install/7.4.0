@@ -11,7 +11,46 @@ sudo apt-get install libzip-dev bison autoconf build-essential pkg-config git-co
 
 
 配置PHP安装参数
-./configure --prefix=/usr/local/php/7.4.0 --with-config-file-path=/etc/php/7.4.0 --enable-mbstring --enable-zip --enable-bcmath --enable-pcntl --enable-ftp --enable-xml --enable-shmop --enable-soap --enable-intl --with-openssl --enable-exif --enable-calendar --enable-sysvmsg --enable-sysvsem --enable-sysvshm --enable-opcache --enable-fpm --enable-session --enable-sockets --enable-mbregex --enable-wddx --with-curl --with-iconv --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --with-openssl --with-pdo-mysql=mysqlnd --with-gettext=/usr --with-zlib=/usr --with-bz2=/usr --with-recode=/usr --with-xmlrpc --with-mysqli=mysqlnd
+./configure --prefix=/usr/local/php/7.4.0 
+--with-config-file-path=/etc/php/7.4.0 
+--enable-mbstring \
+--enable-zip \
+--enable-bcmath \
+--enable-pcntl \
+--enable-ftp \
+--enable-xml \
+--enable-shmop \
+--enable-soap \
+--enable-intl \
+--with-openssl \
+--enable-exif \
+--enable-calendar \
+--enable-sysvmsg \
+--enable-sysvsem \
+--enable-sysvshm \
+--enable-opcache \
+--enable-fpm \
+--enable-session \
+--enable-sockets \
+--enable-mbregex \
+--enable-wddx \
+--with-curl \
+--with-iconv \
+--with-gd \
+--with-jpeg-dir=/usr \
+--with-png-dir=/usr \
+--with-zlib-dir=/usr \
+--with-freetype-dir=/usr \
+--enable-gd-jis-conv \
+--with-openssl \
+--with-pdo-mysql=mysqlnd \
+--with-gettext=/usr \
+--with-zlib=/usr \
+--with-bz2=/usr \
+--with-recode=/usr \
+--with-xmlrpc \
+--with-mysqli=mysqlnd \
+--with-pear \
 
 make 
 sudo make install
