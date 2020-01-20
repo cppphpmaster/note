@@ -1,181 +1,45 @@
-一. 安装php7.4.0 (在7.3.6的基础上还需要sqlite3和oniguruma)
-
-1.安装编译环境  
-sudo apt-get install \
-build-essential \
-libtool \
-gcc \
-g++ \
-vim \
-autoconf \
-sqlite3\
-libiconv-hook-dev \
-libmcrypt-dev \
-libxml2-dev \
-libmysqlclient-dev \
-libcurl4-openssl-dev \
-libjpeg8-dev \
-libfreetype6-dev \
-libzip-dev \
-libsqlite3-dev\
-
-安装oniguruma:  https://github.com/kkos/oniguruma/releases
+wget https://www.php.net/distributions/php-7.4.0.tar.gz
+tar zxf php-7.4.0.tar.gz
+cd php-7.4.0/
 
 
-2.安装php
-cd php-xxx/
-./configure --prefix=/usr/local/php/7.4.0\
---with-config-file-path=/etc/php/7.4.0\
---enable-fpm \
---enable-pcntl \
---enable-mysqlnd \
---enable-opcache \
---enable-sockets \
---enable-sysvmsg \
---enable-sysvsem \
---enable-sysvshm \
---enable-shmop \
---enable-zip \
---enable-soap \
---enable-xml \
---enable-mbstring \
---disable-rpath \
---disable-fileinfo \
---with-mysqli=mysqlnd \
---with-pdo-mysql=mysqlnd \
---with-pcre-regex \
---with-iconv \
---with-zlib \
---with-gd \
---with-mhash \
---with-xmlrpc \
+先安装PHP需要的依赖
+sudo apt-get install libzip-dev bison autoconf build-essential pkg-config git-core\
+   libltdl-dev libbz2-dev libxml2-dev libxslt1-dev libssl-dev libicu-dev libpspell-dev\
+   libenchant-dev libmcrypt-dev libpng-dev libjpeg8-dev libfreetype6-dev libmysqlclient-dev\
+   libreadline-dev libcurl4-openssl-dev librecode-dev libsqlite3-dev libonig-dev
 
-sudo make
+
+配置PHP安装参数
+./configure --prefix=/usr/local/php/7.4.0 --with-config-file-path=/etc/php/7.4.0 --enable-mbstring --enable-zip --enable-bcmath --enable-pcntl --enable-ftp --enable-xml --enable-shmop --enable-soap --enable-intl --with-openssl --enable-exif --enable-calendar --enable-sysvmsg --enable-sysvsem --enable-sysvshm --enable-opcache --enable-fpm --enable-session --enable-sockets --enable-mbregex --enable-wddx --with-curl --with-iconv --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --with-openssl --with-pdo-mysql=mysqlnd --with-gettext=/usr --with-zlib=/usr --with-bz2=/usr --with-recode=/usr --with-xmlrpc --with-mysqli=mysqlnd
+
+make 
 sudo make install
-sudo mkdir -p /etc/php/7.4.0
-sudo cp php.ini-development /etc/php/7.4.0/php.ini
-将PHP的可执行目录添加到环境变量中。打开~/.bashrc，在末尾添加如下内容：
-export PATH=/usr/local/php/7.4.0/bin:$PATH
-export PATH=/usr/local/php/7.4.0/sbin:$PATH
-保存后执行：source ~/.bashrc
-通过php -v查看php版本，完成。
-
-2.1 安装composer
-apt install composer
-配置国内镜像: composer config -g repo.packagist composer https://packagist.phpcomposer.com
-安装指定版本的laravel: composer create-project laravel/laravel myproject --prefer-dist v5.8.*
-
-3. 安装curl扩展
-
-    wget http://curl.haxx.se/download/curl-7.61.1.tar.gz
-    tar zxvf curl-7.61.1.tar.gz
-    cd curl-7.61.1
-    ./configure --prefix=/usr/local/curl/7.61.1
-    make
-    make install
-
-    cd /（php源码目录）/ext/curl
-    运行phpize： /（php编译目录）/bin/phpize
-    ./configure --with-php-config=/（php编译目录）/bin/php-config --with-curl=/usr/local/curl/7.61.1 (curl安装目录)
-    make && make install
-    修改php.ini，增加：extension=curl.so（如果没有安装过其他php扩展，则需要同时配置extension_dir="/（php编译后目录）/lib/php/extensions/no-debug-non-zts-20121212/"，上一个步骤生成.so文件的时候，会输出extension_dir目录）
-	
-4. 安装openssl扩展
-
-要用:
-./configure --with-php-config=/usr/local/php/7.4.0/bin/php-config --with-openssl=/usr
-不能用:
-./configure --with-php-config=/usr/local/php/7.4.0/bin/php-config --with-openssl=/home/hxl/ 下载/openssl-1.0.2g
-因为会报这个错: configure: error: Cannot find OpenSSL's <evp.h>
-
-
-How to solve `configure: error: Cannot find OpenSSL's <evp.h>`?: 
-Assuming that you already have the OpenSSL libraries and header files (on rpm systems the latter are in the xxxx-devel package)...
-
-The issue seems to arise from how configure resolves dependencies which are distributed around the filesystem. To compile the code, the comiler needs to know where the headers are. To link the code, the linker needs to know where the libraries are.
-
-[colin@host]$ configure .... --with-openssl-dir=/usr/include/openssl ....
-...
-checking OpenSSL dir for FTP... /usr/include/openssl
-checking for pkg-config... /usr/bin/pkg-config
-configure: error: Cannot find OpenSSL's <evp.h>
-
-[colin@host]$ find /usr/include -name evp.h
-/usr/include/openssl/evp.h
-
-The include directory has the include file, but pkg-config fails because the library is not in /usr/include/openssl, its in /usr/lib
-
-Running configure again with /usr as the directory:
-
-configure .... --with-openssl-dir=/usr ....
-...
-checking OpenSSL dir for FTP... /usr
-checking for pkg-config... /usr/bin/pkg-config
-checking for OpenSSL version... >= 0.9.6
-checking for CRYPTO_free in -lcrypto... yes
-...
-
-The path passed as an argument is searched to find the relevant resources.
-
-5. 安装swoole扩展
-
-cd swoole-src-master
-phpize
-./configure
-sudo make
-sudo make install
-swoole的./configure有很多额外参数，可以通过./configure --help命令查看,这里均选择默认项
-安装完成后，进入/etc/php目录下，打开php.ini文件，在其中加上如下一句：
-extension=swoole.so
-随后在终端中输入命令php -m查看扩展安装情况。如果在列出的扩展中看到了swoole，则说明安装成功。
 
 
 
-6. 查看php扩展 - 
-	1. php -m
-	2. php --ri swoole
-	3. php --info
+=============
+环境变量
+vim ~/.bashrc
+source ~/.bashrc
 
-7. 安装redis扩展
-	1. 安装redis
+或
 
-	下载：git clone https://github.com/phpredis/phpredis
-	cd phpredis #进入安装目录
-	phpize #用phpize生成configure配置文件
-	./configure --with-php-config=/usr/local/php/7.4.0/bin/php-config  #配置
-	sudo make  #编译
-	sudo make install  #安装
+vim /etc/profile
+source /etc/profile
+==============
 
-	安装完成之后，出现下面的安装路径
-	/usr/local/php/lib/php/extensions/no-debug-non-zts-20090626/
+启动php-fpm
 
-	2. 配置php支持
-	vi /usr/local/php/etc/php.ini  #编辑配置文件，在最后一行添加以下内容
-	extension="redis.so"
+sudo php-fpm
 
-	3. 重启服务
-	sudo service nginx restart
-	sudo /etc/init.d/php-fpm restart 
-	
-8. 安装mysql扩展
-	install mysql in linux
-	cd php源码目录/ext/mysql
-	phpize
-	./configure
-	sudo make
-	sudo make install
-	vim /etc/php/xx/php.ini  加入extension=mysql.so
+如果提示找不到用户组nobody的gid：
 
-9. nginx配置并运行多个php版本
-    1.修改php7的php-fmp服务端口号
-        进入到目录：/usr/local/php/5.7.xx/etc 修改php-fpm.conf这个文件的监听端口listen = 127.0.0.1:9001
-        启动php-fpm
+    [15-Nov-2019 15:53:49] ERROR: [pool www] cannot get gid for group ‘nobody’
+    [15-Nov-2019 15:53:49] ERROR: FPM initialization failed
 
-    2. 现在的情况是：PHP5.6的php-fpm监听的是 127.0.0.1:9000, PHP7.1的php-fpm监听的是 127.0.0.1:9001,
-        如果需要同时启用就都启动这两个php-fpm,
-        进入nginx配置目录/usr/local/etc/nginx/nginx.conf：（注意看两个server 的 fastcgi_pass:后面监听的端口）
-         PHP5.6: 9987-> 127.0.0.1:9000
-         PHP7.1: 9988-> 127.0.0.1:9009
+就要先创建nobody用户组:
 
-    3. 重启nginx
+sudo groupadd nobody
 
+再重新执行sudo php-fpm即可启动。
