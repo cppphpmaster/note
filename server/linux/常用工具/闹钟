@@ -1,0 +1,60 @@
+一. sudo apt-get install sox libsox-fmt-all
+
+然后播放歌曲只需要在其目录下面play就行：
+play *.mp3
+play 平凡之路.mp3
+
+*.mp3是播放所有mp3歌曲，也可以指定歌曲名，
+Ctrl+c可以切换歌曲，即中断当前播放歌曲，切换到下一曲，这个命令是很强大，
+有很多可选参数.
+
+
+二.定时音乐闹钟
+
+crontab -e
+
+早上6点50随机播放该歌曲，当然前提是你电脑要开机.
+
+50 6 * * * nohup /usr/bin/play ~/Music/CloudMusic/KOKIA\ -\ 白い雪.mp3 > /dev/null 2>&1 &
+
+
+三.随机播放歌曲
+
+#!/bin/bash
+#歌曲存放路径
+dir='/home/jwang/Music/CloudMusic'
+#歌曲名称列表,中间不要有空格
+sounds=(
+CanoninD.mp3
+泡沫.mp3
+演员.mp3
+南山南.mp3
+Beautiful.mp3
+Victory.mp3
+DreamItPossible.mp3
+)
+#产生随机数
+function rand(){
+    min=$1
+    max=$(($2-$min+1))
+    num=$(date +%s%N)
+    return $(($num%$max+$min))
+}
+rand 0 ${#sounds[@]}-1
+#执行播放命令
+/usr/bin/play ${dir}/${sounds[$?]}
+
+当然这也是伪随机，而且需要把歌曲名称存在数组里面，好处就在可以自定义需要播放的歌曲，
+坏处就说如果需要播放的歌曲很多，那就麻烦了，可以给这个脚本起一个名字比如说music，
+以后直接敲music就可以随机播放一首歌曲.
+
+sudo ln -s /home/jwang/Documents/play.sh /usr/bin/music
+music
+
+加入下面语句，意思是每天早上7点50随机播放一首歌曲
+
+50 7 * * * nohup /usr/bin/music > /dev/null 2>&1 &
+
+其实我觉得可以加一条定时任务，每隔1个小时播放一首歌曲缓解一下工作压力
+
+* */1 * * * nohup /usr/bin/music > /dev/null 2>&1 &
