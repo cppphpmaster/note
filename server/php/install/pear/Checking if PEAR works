@@ -1,0 +1,100 @@
+Verifying command line tool
+Both pear and pecl tools should be available everywhere on command line. For that to work, pear's binary (bin) directory should be in your PATH variable.
+
+To verify it works, simply type pear. A list of commands should be shown:
+
+$ pear
+Commands:
+build                  Build an Extension From C Source
+bundle                 Unpacks a Pecl Package
+channel-add            Add a Channel
+...
+You should further test that PEAR is up to date:
+
+$ pear version
+PEAR Version: 1.7.2
+PHP Version: 5.2.6RC4-pl0-gentoo
+Zend Engine Version: 2.2.0
+Running on: Linux ...
+Verifying the include path
+To use PEAR and PEAR compatible packages in your applications, you normally include them into your PHP scripts using require_once(). For this to work, PEAR's php_dir must be a part of PHP's include path.
+
+First, check where PEAR installs .php files:
+
+$ pear config-get php_dir
+/usr/share/lib/php/
+This directory will contain System.php.
+
+Now it's time to find which configuration file is used by your PHP installation. On command line, execute:
+
+$ php --ini
+Configuration File (php.ini) Path: /etc/php/cli-php5
+Loaded Configuration File:         /etc/php/cli-php5/php.ini
+Scan for additional .ini files in: /etc/php/cli-php5/ext-active
+Additional .ini files parsed:      /etc/php/cli-php5/ext-active/php_gtk2.ini,
+/etc/php/cli-php5/ext-active/xdebug.ini
+To see which php.ini is used by PHP on your web server, create a file with only <?php phpinfo(); ?> as the contents, and save it in your local web root as check_php.php. Open the file in your browser as http://localhost/check_php.php, to find the path to the php.ini file your web server is using.
+
+Now check PHP's include_path setting on command line:
+
+$ php -c /path/to/php.ini -r 'echo get_include_path()."\n";'
+To check PHP's include_path in your web server, create a file with only <?php phpinfo(); ?> as the contents, and save it in your local web root as check_php.php. Open the file in your browser as http://localhost/check_php.php, to verify the include_path your web server is using.
+
+In every case, PEAR's php_dir should be in the include path. If not, add it in your system's php.ini.
+
+Now that this is done, try including a file. Create a new check_pear.php file with the following contents:
+
+<?php
+require_once 'System.php';
+var_dump(class_exists('System', false));
+?>
+System.php is shipped with every PEAR installation and thus should be on your computer, too. Open the file with the browser from your web server, and also try it on command line. The only output should be
+
+bool(true)
+A message like:
+
+
+Warning: require_once(System.php): failed to open stream:
+ No such file or directory in /path/to/check_pear.php on line 2
+   
+means that your include path is not correct. (So go and fix it!)
+
+A completely white page in your browser hints two things:
+
+Your server is configured to not display any errors to the user/browser (display_errors Off)
+
+There was an error including System.php, and you should check you server's error log.
+
+That's it! Now go on and install some packages.
+
+Things that could be in your way
+After changing php.ini, you need to restart your web server.
+
+Few people also reported they had to restart the whole machine physically, probably due to PATH changes not propagating correctly. Before wasting hours and after you tried everything else, just try that.
+
+Newer Linux distributions use multiple php.ini files; mostly one for the web server (e.g. /etc/php/apache2-php5/) and one for command line (like /etc/php/cli-php5/). Make sure you edit the right ones.
+
+On Windows, recent versions of PHP use php.ini from their own directory (where php.exe is). You still might have an old php.ini in your windows or system(32) directory that fools you.
+
+You cannot get away with using absolute paths in your own require_once() statements as an altervative to fixing your include_path, because all the other files that are then required by your scripts are all coded for relative pathing based on include_path.
+
+Modifying php.ini
+To get PEAR working properly, you need to adjust PHP's include_path. After you found php.ini, open it in an editor.
+
+Search for the line include_path.
+
+Now that you found it, you probably will see a semicolon ; at the beginning. This means the line is a comment. Add a new line below it.
+
+In this line, write:
+
+include_path="."
+Depending on your operating system, add a : (Unix/Linux/FreeBSD/Mac OS X) or a ; (Windows) after the dot. Add PEAR's php_dir after it. (The directory System.php is located in!)
+
+The result should look like that:
+
+; Unix
+include_path=".:/usr/local/php/pear/"
+or
+
+; Windows
+include_path=".;C:\php\pear\"

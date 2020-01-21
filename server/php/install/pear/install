@@ -1,0 +1,97 @@
+Getting and installing the PEAR package manager
+Windows
+After you have downloaded and installed PHP, you have to manually execute the batch file located in e.g. c:\php\go-pear.bat. Alternatively, download https://pear.php.net/go-pear.phar with your browser and save the output to a local file named go-pear.phar. You can then run
+
+      
+php go-pear.phar
+      
+     
+in a Windows Command Prompt to start the installation.
+
+The setup will ask you some questions and afterwards the PEAR Package Manager will be installed in the path, which you have specified during installation.
+
+Finally you have to add that installation path to your PATH environment. Either do this manually (Start > Control Panel > System > Environment) or run (double-click) the newly generated PEAR_ENV.reg that's now found in the PHP source directory.
+
+After that you can access the PEAR Package Manager by running the command pear in a Windows Command Prompt.
+
+After changing php.ini, you will need to restart your web server.
+
+Now check that PEAR works.
+
+Unix/Linux/BSD
+When using PHP, the PEAR Package Manager is already installed unless one has used the ./configure option --without-pear.
+
+If one uses a version of PHP that is supplied by Unix/Linux/BSD distributors it may be necessary to manually install PEAR. Users should consult the documentation for the respective distribution in this case.
+
+If you want to re-install the Package Manager, you can use the following provisional way:
+
+      
+$ wget http://pear.php.net/go-pear.phar
+$ php go-pear.phar
+      
+     
+Please note, you may need to install the wget package via your Unix/Linux/BSD package manager. On Debian and Ubuntu this is done via:
+
+      
+      $ sudo apt-get install wget
+      
+     
+Alternatively, download the go-pear.phar file via your browser.
+
+If the process just exits without any output, your syslog will probably contain the following lines:
+
+suhosin[4705]: ALERT - Include filename ('phar://go-pear.phar/index.php')
+ is an URL that is not allowed
+ (attacker 'REMOTE_ADDR not set', file '/root/go-pear.phar', line 1236)
+     
+To work around this problem, enable the phar in /etc/php5/conf.d/suhosin.ini:
+
+suhosin.executor.include.whitelist = phar
+     
+Now check that PEAR works.
+
+Mac OS X
+Use curl as shown below to download the go-pear.phar file or just download the go-pear.phar file via your browser.
+
+      
+$ curl -O https://pear.php.net/go-pear.phar
+$ php -d detect_unicode=0 go-pear.phar
+      
+     
+You're now ready to configure PEAR for installation.
+
+First you need to change the Installation Base.
+
+So type 1, and then press Enter.
+
+Enter /usr/local/pear
+
+Press Enter.
+
+Then, you will need to change the Binaries directory.
+
+Type 4, and then press Enter.
+
+Enter /usr/local/bin
+
+Press Enter.
+
+Once you have changed the Installation Base and the Binaries Directory, press Enter to install PEAR.
+
+For a system-wide installation, you will need to execute the go-pear script with increased permissions. This is only recommended for advanced users.
+
+       
+$ curl -O https://pear.php.net/go-pear.phar
+$ sudo php -d detect_unicode=0 go-pear.phar
+       
+      
+Now check that PEAR works.
+
+PEAR in hosting environments
+If you are running your site at a web hosting provider with no direct access to the server (via local logins, Telnet or SSH), you can use the PEAR Installer using the Web Frontend or (S)FTP.
+
+Go to go-pear and save as go-pear.php. Copy go-pear.php to your server and open the corresponding URL in your browser, for example http://example.com/pear/go-pear.php.
+
+Do not forget to protect the pear directory if you did not do already before the installation: Make it unreadable and not executable from external (i.e. put it outside public_html).
+
+Now check that PEAR works.
