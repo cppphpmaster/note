@@ -1,0 +1,12 @@
+1. docker: Error response from daemon: Get https://registry-1.docker.io/v2/: net/http: 
+    TLS handshake timeout.
+
+    sudo vim /etc/hosts
+    在最后加上
+    52.22.201.61 registry-1.docker.io
+    重试 即可
+
+2. docker: Error response from daemon: Get https://registry-1.docker.io/v2/: net/http: 
+    request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers).
+
+    

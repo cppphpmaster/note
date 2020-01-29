@@ -9,6 +9,10 @@
   tar cf work.tar work
 
   查找文件: find / -name filename
+
+修改hosts:
+sudo vim /etc/hosts 
+sudo /etc/init.d/networking restart
   
 ssh登录: ssh -p 12333 root@216.230.230.114
   
