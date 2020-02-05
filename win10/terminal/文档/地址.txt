@@ -1,0 +1,1 @@
+https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md

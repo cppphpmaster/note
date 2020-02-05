@@ -1,0 +1,8 @@
+管理员身份打开cmd
+
+以下命令一致认为你的windows.old文件夹在c盘根目录下。在命令行工具中输入如下三个命令
+功能分别为：修改文件夹所有者，修改文件夹权限，删除文件夹。
+
+takeown /F c:\Windows.old\* /R /A /D Y
+cacls c:\Windows.old\*.* /T /grant administrators:F
+rmdir /S /Q c:\Windows.old
